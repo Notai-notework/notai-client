@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'ButtonComponents/color.dart';
+import '../../etc/color.dart';
 import 'LoginComponents/cancel_button.dart';
 import 'LoginComponents/login_form.dart';
 import 'LoginComponents/register_form.dart';

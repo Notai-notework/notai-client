@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:notai/login/loginButtonComponents/login_elevatedbutton.dart';
 import '../../authorization/authorization.dart';
-import '../ButtonComponents/rounded_button.dart';
-import '../ButtonComponents/rounded_input.dart';
-import '../ButtonComponents/rounded_password_input.dart';
+import '../../etc/color.dart';
+import '../loginButtonComponents/rounded_button.dart';
+import '../loginButtonComponents/rounded_input.dart';
+import '../loginButtonComponents/rounded_password_input.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 
 class LoginForm extends StatefulWidget {
   const LoginForm({
@@ -44,6 +46,7 @@ class _LoginFormState extends State<LoginForm> {
       // 실패 시 처리 (예: 에러 메시지 보여주기)
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedOpacity(
@@ -60,11 +63,11 @@ class _LoginFormState extends State<LoginForm> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Welcome Back',
+                  'NOTAI',
                   style: TextStyle(
+                      color: titleColor,
                       fontWeight: FontWeight.bold,
-                      fontSize: 24
-                  ),
+                      fontSize: 24),
                 ),
                 SizedBox(height: 40),
                 // 이메일 입력 필드
@@ -79,19 +82,29 @@ class _LoginFormState extends State<LoginForm> {
                   controller: passwordController,  // 컨트롤러 연결
                 ),
                 SizedBox(height: 10),
-                // 로그인 버튼
-                RoundedButton(
-                  title: 'LOGIN',
-                  onPressed: () {
-                    login();
-                  },
-                ),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    login();
-                  },
-                  child: Text("Login2"),
+                // 로그인 버튼 (분리된 컴포넌트 사용)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    LoginElevatedButton(
+                      onPressed: () {
+                      },
+                      buttonText: "회원가입",
+                    ),
+                    SizedBox(width: 20),
+                    LoginElevatedButton(
+                      onPressed: (){
+                        login();
+                      },
+                      buttonText: "로그인",
+                    ),
+                    SizedBox(width: 20),
+                    LoginElevatedButton(
+                      onPressed: () {
+                      },
+                      buttonText: "아이디/비밀번호 찾기",
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -101,3 +114,4 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 }
+

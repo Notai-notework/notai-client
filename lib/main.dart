@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'login/ButtonComponents/color.dart';
 import 'login/login.dart';
-import 'package:http/http.dart' as http;
+import '../../etc/color.dart';
 
 
 void main() {
