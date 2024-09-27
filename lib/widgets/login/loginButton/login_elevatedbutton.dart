@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../etc/color.dart';
+import '../../../utils/color/color.dart';
 
 class LoginElevatedButton extends StatelessWidget {
   final VoidCallback onPressed;

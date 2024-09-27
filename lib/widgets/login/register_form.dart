@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import '../loginButtonComponents/rounded_button.dart';
-import '../loginButtonComponents/rounded_input.dart';
-import '../loginButtonComponents/rounded_password_input.dart';
-
-// import 'package:flutter_svg/flutter_svg.dart';
-
+import 'loginButton/rounded_button.dart';
+import 'loginButton/rounded_input.dart';
+import 'loginButton/rounded_password_input.dart';
 
 class RegisterForm extends StatelessWidget {
-   /*const*/ RegisterForm({
+  /*const*/ RegisterForm({
     Key? key,
     required this.isLogin,
     required this.animationDuration,
@@ -21,7 +18,6 @@ class RegisterForm extends StatelessWidget {
   final double defaultLoginSize;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -39,16 +35,12 @@ class RegisterForm extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
-
                 children: [
                   SizedBox(height: 10),
 
                   Text(
                     'Welcome',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                   ),
 
                   SizedBox(height: 40),
@@ -57,15 +49,25 @@ class RegisterForm extends StatelessWidget {
 
                   SizedBox(height: 40),
 
-                  RoundedInput(icon: Icons.mail, hint: 'Username', controller: emailController),
+                  RoundedInput(
+                      icon: Icons.mail,
+                      hint: 'Username',
+                      controller: emailController),
 
-                  RoundedInput(icon: Icons.face_rounded, hint: 'Name', controller: emailController),
+                  RoundedInput(
+                      icon: Icons.face_rounded,
+                      hint: 'Name',
+                      controller: emailController),
 
-                  RoundedPasswordInput(hint: 'Password', controller: passwordController),
+                  RoundedPasswordInput(
+                      hint: 'Password', controller: passwordController),
 
                   SizedBox(height: 10),
 
-                  RoundedButton(title: 'SIGN UP', onPressed: () {},),
+                  RoundedButton(
+                    title: 'SIGN UP',
+                    onPressed: () {},
+                  ),
 
                   SizedBox(height: 10),
                 ],

@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:notai/login/loginButtonComponents/login_elevatedbutton.dart';
-import '../../authorization/authorization.dart';
-import '../../etc/color.dart';
-import '../loginButtonComponents/rounded_button.dart';
-import '../loginButtonComponents/rounded_input.dart';
-import '../loginButtonComponents/rounded_password_input.dart';
-import 'dart:convert';
-// import 'package:http/http.dart' as http;
+import '../../utils/auth/authorization.dart';
+import '../../utils/color/color.dart';
+import 'loginButton/login_elevatedbutton.dart';
+import 'loginButton/rounded_input.dart';
+import 'loginButton/rounded_password_input.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({
@@ -30,7 +27,7 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final AuthService authService = AuthService();  // AuthService 인스턴스 생성
+  final AuthService authService = AuthService(); // AuthService 인스턴스 생성
 
   Future<void> login() async {
     String? token = await authService.login(
@@ -74,12 +71,12 @@ class _LoginFormState extends State<LoginForm> {
                 RoundedInput(
                   icon: Icons.mail,
                   hint: 'email',
-                  controller: emailController,  // 컨트롤러 연결
+                  controller: emailController, // 컨트롤러 연결
                 ),
                 // 비밀번호 입력 필드
                 RoundedPasswordInput(
                   hint: 'password',
-                  controller: passwordController,  // 컨트롤러 연결
+                  controller: passwordController, // 컨트롤러 연결
                 ),
                 SizedBox(height: 10),
                 // 로그인 버튼 (분리된 컴포넌트 사용)
@@ -87,21 +84,19 @@ class _LoginFormState extends State<LoginForm> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     LoginElevatedButton(
-                      onPressed: () {
-                      },
+                      onPressed: () {},
                       buttonText: "회원가입",
                     ),
                     SizedBox(width: 20),
                     LoginElevatedButton(
-                      onPressed: (){
+                      onPressed: () {
                         login();
                       },
                       buttonText: "로그인",
                     ),
                     SizedBox(width: 20),
                     LoginElevatedButton(
-                      onPressed: () {
-                      },
+                      onPressed: () {},
                       buttonText: "아이디/비밀번호 찾기",
                     ),
                   ],
@@ -114,4 +109,3 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 }
-

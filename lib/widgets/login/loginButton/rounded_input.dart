@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../etc/color.dart';
-import 'input_container.dart';
 
-class RoundedPasswordInput extends StatelessWidget {
+class RoundedInput extends StatelessWidget {
+  final IconData icon;
   final String hint;
   final TextEditingController controller;
 
-  const RoundedPasswordInput({
+  const RoundedInput({
     Key? key,
+    required this.icon,
     required this.hint,
     required this.controller,
   }) : super(key: key);
@@ -23,9 +23,8 @@ class RoundedPasswordInput extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
-        obscureText: true, // 비밀번호 입력 시 텍스트 숨김 처리
         decoration: InputDecoration(
-          icon: Icon(Icons.lock, color: Colors.grey),
+          icon: Icon(icon, color: Colors.grey),
           hintText: hint,
           border: InputBorder.none,
         ),

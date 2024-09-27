@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'login/login.dart';
-import '../../etc/color.dart';
-
+import 'package:notai/utils/color/color.dart';
+import 'screens/login/login_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,10 +16,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primaryColor: kPrimaryColor,
-          textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme)
-      ),
+          textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme)),
       home: LoginScreen(),
     );
   }
 }
-
