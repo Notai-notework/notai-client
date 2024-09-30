@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notai/screens/document/document_list_screen.dart';
 
 class CustomScaffold extends StatefulWidget {
   final Widget appBarTitle;
@@ -26,9 +27,26 @@ class _CustomScaffoldState extends State<CustomScaffold> {
             child: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: (index) {
+            if (_currentIndex == index) return;
             setState(() {
               _currentIndex = index;
             });
+            switch (index) {
+              case 0:
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DocumentListScreen()));
+                break;
+              // case 1:
+              //   Navigator.pushReplacement(
+              //       context, MaterialPageRoute(builder: (context) => Screen()));
+              //   break;
+              // case 2:
+              //   Navigator.pushReplacement(
+              //       context, MaterialPageRoute(builder: (context) => Screen()));
+              //   break;
+            }
           },
           items: const [
             BottomNavigationBarItem(
