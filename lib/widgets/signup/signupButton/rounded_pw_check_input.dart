@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class RoundedPasswordInput extends StatelessWidget {
+class RoundedPwCheckInput extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
 
-  const RoundedPasswordInput({
+  const RoundedPwCheckInput({
     super.key,
     required this.hint,
     required this.controller,

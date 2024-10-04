@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 
-class RoundedPasswordInput extends StatelessWidget {
+class RoundedEmailInput extends StatelessWidget {
+  final IconData icon;
   final String hint;
   final TextEditingController controller;
 
-  const RoundedPasswordInput({
-    super.key,
+  const RoundedEmailInput({
+    Key? key,
+    required this.icon,
     required this.hint,
     required this.controller,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       // margin: EdgeInsets.symmetric(vertical: 10),
-      margin: EdgeInsets.fromLTRB(200, 10, 200, 10),
+      margin: EdgeInsets.fromLTRB(200, 10, 100, 10),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -22,9 +24,8 @@ class RoundedPasswordInput extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
-        obscureText: true, // 비밀번호 입력 시 텍스트 숨김 처리
         decoration: InputDecoration(
-          icon: Icon(Icons.lock, color: Colors.grey),
+          icon: Icon(icon, color: Colors.grey),
           hintText: hint,
           border: InputBorder.none,
         ),

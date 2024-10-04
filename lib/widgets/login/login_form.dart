@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../utils/auth/authorization.dart';
+import 'package:flutter_svg/svg.dart';
+import '../../utils/auth/login_authorization.dart';
 import '../../utils/color/color.dart';
+import '../find/findButton/find_elevatedbutton.dart';
+import '../global/everyLoginButton/rounded_input.dart';
+import '../global/everyLoginButton/rounded_password_input.dart';
+import '../signup/signupButton/signup_elevatedbutton.dart';
 import 'loginButton/login_elevatedbutton.dart';
-import 'loginButton/rounded_input.dart';
-import 'loginButton/rounded_password_input.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({
@@ -27,21 +30,14 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final AuthService authService = AuthService(); // AuthService 인스턴스 생성
+  final LoginAuthService authService =
+      LoginAuthService(); // AuthService 인스턴스 생성
 
   Future<void> login() async {
     String? token = await authService.login(
       emailController.text,
       passwordController.text,
     );
-
-    if (token != null) {
-      print('Login successful!');
-      // 성공 시 처리 (예: 새로운 화면으로 이동)
-    } else {
-      print('Login failed');
-      // 실패 시 처리 (예: 에러 메시지 보여주기)
-    }
   }
 
   @override
@@ -60,13 +56,24 @@ class _LoginFormState extends State<LoginForm> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'NOTAI',
+                  'login',
                   style: TextStyle(
+                      shadows: [
+                        Shadow(
+                          color: Colors.black,
+                          // Choose the color of the shadow
+                          blurRadius: 2.0,
+                          // Adjust the blur radius for the shadow effect
+                          offset: Offset(2.0,
+                              2.0), // Set the horizontal and vertical offset for the shadow
+                        ),
+                      ],
                       color: titleColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 65),
                 ),
-                SizedBox(height: 40),
+                SizedBox(height: 50),
+                SvgPicture.asset('utils/images/login.svg'),
                 // 이메일 입력 필드
                 RoundedInput(
                   icon: Icons.mail,
@@ -78,12 +85,12 @@ class _LoginFormState extends State<LoginForm> {
                   hint: 'password',
                   controller: passwordController, // 컨트롤러 연결
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 30),
                 // 로그인 버튼 (분리된 컴포넌트 사용)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    LoginElevatedButton(
+                    SignupElevatedButton(
                       onPressed: () {},
                       buttonText: "회원가입",
                     ),
@@ -95,7 +102,7 @@ class _LoginFormState extends State<LoginForm> {
                       buttonText: "로그인",
                     ),
                     SizedBox(width: 20),
-                    LoginElevatedButton(
+                    FindElevatedButton(
                       onPressed: () {},
                       buttonText: "아이디/비밀번호 찾기",
                     ),

@@ -15,11 +15,12 @@ class RoundedInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      // margin: EdgeInsets.symmetric(vertical: 10),
+      margin: EdgeInsets.fromLTRB(200, 10, 200, 10),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(29),
+        borderRadius: BorderRadius.circular(30),
       ),
       child: TextField(
         controller: controller,
