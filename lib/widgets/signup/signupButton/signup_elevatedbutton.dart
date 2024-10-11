@@ -6,7 +6,7 @@ class SignupElevatedButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String buttonText;
 
-  const SignupElevatedButton({q
+  const SignupElevatedButton({
     super.key,
     required this.onPressed,
     required this.buttonText,

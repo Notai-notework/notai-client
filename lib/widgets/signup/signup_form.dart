@@ -33,6 +33,11 @@ class SignUpForm extends StatefulWidget {
 class _SignUpFormState extends State<SignUpForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController passwordCheckController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController nickNameController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
 
   final LoginAuthService authService = LoginAuthService(); // AuthService 인스턴스 생성
 
@@ -42,13 +47,7 @@ class _SignUpFormState extends State<SignUpForm> {
       passwordController.text,
     );
 
-    if (token != null) {
-      print('Login successful!');
-      // 성공 시 처리 (예: 새로운 화면으로 이동)
-    } else {
-      print('Login failed');
-      // 실패 시 처리 (예: 에러 메시지 보여주기)
-    }
+
   }
 
   @override
@@ -111,27 +110,27 @@ class _SignUpFormState extends State<SignUpForm> {
                 SizedBox(height: 10),
                 RoundedPwCheckInput(
                   hint: 'password check',
-                  controller: passwordController,  // 컨트롤러 연결
+                  controller: passwordCheckController,  // 컨트롤러 연결
                 ),
                 SizedBox(height: 10),
                 RoundedNameInput(
                   hint: 'name',
-                  controller: passwordController, // 컨트롤러 연결
+                  controller: nameController, // 컨트롤러 연결
                 ),
                 SizedBox(height: 10),
                 RoundedNumberInput(
                   hint: 'phone number',
-                  controller: passwordController,  // 컨트롤러 연결
+                  controller: phoneNumberController,  // 컨트롤러 연결
                 ),
                 SizedBox(height: 10),
                 RoundedNicknameInput(
                   hint: 'nickname',
-                  controller: passwordController,  // 컨트롤러 연결
+                  controller: nickNameController,  // 컨트롤러 연결
                 ),
                 SizedBox(height: 10),
                 RoundedAddressInput(
                   hint: 'address',
-                  controller: passwordController,  // 컨트롤러 연결
+                  controller: addressController,  // 컨트롤러 연결
                 ),
                 SizedBox(height: 10),
               ],

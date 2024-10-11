@@ -22,7 +22,6 @@ class RoundedAddressInput extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
-        obscureText: true, // 비밀번호 입력 시 텍스트 숨김 처리
         decoration: InputDecoration(
           icon: Icon(Icons.home, color: Colors.grey),
           hintText: hint,
