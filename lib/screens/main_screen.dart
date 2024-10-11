@@ -2,38 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:notai/screens/document/document_list_screen.dart';
 import 'package:notai/screens/login/login_screen.dart';
 import 'package:notai/utils/color/color.dart';
+import 'package:notai/widgets/global/global_appbar.dart';
 
-class CustomScaffold extends StatefulWidget {
-  final Widget body;
-  final Widget appBarTitle;
-
-  const CustomScaffold({
-    super.key,
-    required this.body, // Scaffold appBarTitle (위젯)
-    required this.appBarTitle, // Scaffold body
-  });
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
 
   @override
-  State<CustomScaffold> createState() => _CustomScaffoldState();
+  State<MainScreen> createState() => _MainScreen();
 }
 
-class My extends StatelessWidget {
-  const My({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: TextButton(
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => LoginScreen()));
-          },
-          child: Text('to')),
-    );
-  }
-}
-
-class _CustomScaffoldState extends State<CustomScaffold> {
+class _MainScreen extends State<MainScreen> {
   int _selectedIndex = 0;
 
   // 바텀 네비게이션 탭에 대한 페이지 리스트
@@ -56,21 +34,9 @@ class _CustomScaffoldState extends State<CustomScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: widget.appBarTitle),
-        body: IndexedStack(
-          index: _selectedIndex,
-          children: _pages.map((page) {
-            int index = _pages.indexOf(page);
-            return Navigator(
-              key: _navigatorKeyList[index],
-              onGenerateRoute: (_) {
-                return MaterialPageRoute(builder: (context) => page);
-              },
-            );
-          }).toList(),
-        ),
-        bottomNavigationBar: Container(
-            child: BottomNavigationBar(
+        appBar: const GlobalAppbar(),
+        body: _pages[_selectedIndex],
+        bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: (index) {
             setState(() {
@@ -84,6 +50,6 @@ class _CustomScaffoldState extends State<CustomScaffold> {
             BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: '즐겨찾기'),
           ],
           selectedItemColor: titleColor,
-        )));
+        ));
   }
 }

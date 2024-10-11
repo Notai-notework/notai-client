@@ -13,6 +13,13 @@ dependencies:
   cupertino_icons: ^1.0.6
   http: ^1.2.2
   google_fonts: ^6.2.1
+  file_picker:
+  pdf_image_renderer: ^0.6.0
+  path_provider:
+  sqflite:
+  scribble: ^0.10.0+1
+  image:
+  image_gallery_saver: ^1.7.1
 
 dev_dependencies:
   flutter_test:
