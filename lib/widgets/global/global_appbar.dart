@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import '../../screens/login/login_screen.dart';
 import '../../utils/color/color.dart';
 
-class GlobalAppbar extends StatefulWidget implements PreferredSizeWidget{
-  const GlobalAppbar({super.key});
+class GlobalAppbar extends StatefulWidget implements PreferredSizeWidget {
+  final Widget? leading;
+
+  const GlobalAppbar({super.key, this.leading});
 
   @override
   State<GlobalAppbar> createState() => _GlobalAppbarState();
@@ -19,6 +21,14 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: titleColor,
+      leading: widget.leading ??
+          IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              // 기본 뒤로가기 버튼 동작
+              Navigator.of(context).pop();
+            },
+          ),
       title: const Text(
         'NOTAI',
         style: TextStyle(

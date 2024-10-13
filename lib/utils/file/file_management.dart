@@ -18,6 +18,7 @@ class FileManagement {
   // file: 문서 파일
   Future<void> saveDocument(int id, String filePath, String fileName) async {
     Directory directory = await getApplicationDocumentsDirectory();
+    print(directory.path);
 
     String newFilePath = p.join(directory.path, id.toString());
     if (!await Directory(newFilePath).exists()) {
@@ -40,9 +41,9 @@ class FileManagement {
         pageIndex: i,
         x: 0,
         y: 0,
-        width: 450,
+        width: size.width,
         // you can pass a custom size here to crop the image
-        height: 640,
+        height: size.height,
         // you can pass a custom size here to crop the image
         scale: 1,
         // increase the scale for better quality (e.g. for zooming)

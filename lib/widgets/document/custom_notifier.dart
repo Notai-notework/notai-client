@@ -6,10 +6,10 @@ class CustomNotifier extends ScribbleNotifier {
       : super(widths: widths, allowedPointersMode: mode);
 
   // 고유한 GlobalKey를 생성
-  final GlobalKey _uniqueRepaintBoundaryKey = GlobalKey();
+  // final GlobalKey _uniqueRepaintBoundaryKey = UniqueKey();
 
-  @override
-  GlobalKey get repaintBoundaryKey => _uniqueRepaintBoundaryKey;
+  // @override
+  // GlobalKey get repaintBoundaryKey => _uniqueRepaintBoundaryKey;
 
   void setWidths(List<double> widths) {
     this.widths[0] = widths[0];

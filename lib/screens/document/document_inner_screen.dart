@@ -24,12 +24,17 @@ class DocumentInnerScreen extends StatefulWidget {
 
 class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
   List<Uint8List> _images = [];
+  List<List<double>> _imagesSizes = [];
   List<CustomNotifier> notifier = [];
   final TransformationController _controller = TransformationController();
+  late final PageController _pageController;
   double _currentScale = 1.0;
   int _currentImageIndex = 0;
+
+  List<GlobalKey> _globalKeys = [];
   final GlobalKey _globalKey = GlobalKey();
   bool isLoading = true;
+  bool isSaving = false;
 
   void _fetchImages(int id) async {
     Directory directory = await getApplicationDocumentsDirectory();
@@ -41,14 +46,20 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
     for (int i = 0; i < imageFiles.length; i++) {
       var file = await File("${path}page_${i + 1}.png").readAsBytes();
       images.add(file);
+
+      final ui.Codec codec = await ui.instantiateImageCodec(file);
+      final ui.FrameInfo frameInfo = await codec.getNextFrame();
+      final ui.Image image = frameInfo.image;
+
+      _imagesSizes.add([image.width.toDouble(), image.height.toDouble()]);
+
+      _globalKeys.add(GlobalKey());
     }
 
     _images = images;
     notifier = List.generate(_images.length,
         (index) => CustomNotifier([1, 3, 5], ScribblePointerMode.penOnly));
 
-    print('======================= ${notifier.length}');
-    print('======================= ${images.length}');
     _controller.addListener(() {
       setState(() {
         _currentScale = _controller.value.getMaxScaleOnAxis();
@@ -71,14 +82,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
   void initState() {
     super.initState();
     _fetchImages(widget.documentId);
-
-    // _controller.addListener(() {
-    //   setState(() {
-    //     _currentScale = _controller.value.getMaxScaleOnAxis();
-    //     notifier[_currentImageIndex].setWidths(
-    //         [5 / _currentScale, 10 / _currentScale, 15 / _currentScale]);
-    //   });
-    // });
+    _pageController = PageController();
   }
 
   @override
@@ -97,71 +101,86 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
       containerWidth = screenWidth * 1.0; // 화면의 80% 너비
     }
     return Scaffold(
-        appBar: const GlobalAppbar(),
+        key: UniqueKey(),
+        appBar: GlobalAppbar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              // 뒤로가기 버튼 눌렀을 때 이벤트 처리
+              _save(widget.documentId);
+            },
+          ),
+        ),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                  child: Container(
+                  child: SizedBox(
                       width: containerWidth,
                       height: double.infinity,
                       child: isLoading
-                          ? const Center(child: CircularProgressIndicator())
-                          : PageView.builder(
-                              onPageChanged: (index) {
-                                setState(() {
-                                  _currentImageIndex = index;
-                                  notifier[_currentImageIndex].clear();
-                                });
-                              },
-                              itemCount: _images.length,
-                              itemBuilder: (context, index) {
-                                GlobalKey key = GlobalKey();
-                                return Center(
-                                    child: InteractiveViewer(
-                                  boundaryMargin: EdgeInsets.all(20.0),
-                                  minScale: 0.5,
-                                  maxScale: 4.0,
-                                  child: RepaintBoundary(
-                                      key: key,
-                                      child: Container(
-                                        width: 450,
-                                        height: 640,
-                                        decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                                image:
-                                                    MemoryImage(_images[index]),
-                                                fit: BoxFit.fitHeight)),
-                                        child: Scribble(
-                                            key: notifier[index]
-                                                .repaintBoundaryKey,
-                                            notifier:
-                                                notifier[_currentImageIndex]),
-                                      )),
-                                ));
-                              }))),
-              // Container(
-              //     height: 100,
-              //     child: Padding(
-              //         padding: const EdgeInsets.all(16),
-              //         child: Row(
-              //           children: [
-              //             _buildColorToolbar(context),
-              //             const VerticalDivider(width: 32),
-              //             _buildStrokeToolbar(context),
-              //             const Expanded(child: SizedBox()),
-              //             _buildPointerModeSwitcher(context),
-              //             const Expanded(child: SizedBox()),
-              //             TextButton(
-              //                 onPressed: () {
-              //                   // _showImage(
-              //                   //     context, _images[_currentImageIndex]);
-              //                   _captureAndSave();
-              //                 },
-              //                 child: Text('dd'))
-              //           ],
-              //         )))
+                          ? const Center(
+                              child: Column(children: [
+                              const SizedBox(height: 300),
+                              CircularProgressIndicator(),
+                              const SizedBox(height: 50),
+                              Text('문서를 불러오고 있습니다..')
+                            ]))
+                          : isSaving
+                              ? const Center(
+                                  child: Column(children: [
+                                  const SizedBox(height: 300),
+                                  CircularProgressIndicator(),
+                                  const SizedBox(height: 50),
+                                  Text('문서를 저장 중 입니다..')
+                                ]))
+                              : PageView.builder(
+                                  controller: _pageController,
+                                  onPageChanged: (index) {
+                                    _currentImageIndex = index;
+                                    // notifier[index].clear();
+                                  },
+                                  itemCount: _images.length,
+                                  itemBuilder: (context, index) {
+                                    return Center(
+                                        child: InteractiveViewer(
+                                      boundaryMargin:
+                                          const EdgeInsets.all(20.0),
+                                      minScale: 1.0,
+                                      maxScale: 4.0,
+                                      child: RepaintBoundary(
+                                          key: _globalKeys[index],
+                                          child: Container(
+                                            // width: 450,
+                                            // height: 640,
+                                            width: _imagesSizes[index][0],
+                                            height: _imagesSizes[index][1],
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                image: DecorationImage(
+                                                    image: MemoryImage(
+                                                        _images[index]),
+                                                    fit: BoxFit.scaleDown)),
+                                            child: Scribble(
+                                                notifier: notifier[index]),
+                                          )),
+                                    ));
+                                  }))),
+              SizedBox(
+                  height: 100,
+                  child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          _buildColorToolbar(context),
+                          const VerticalDivider(width: 32),
+                          _buildStrokeToolbar(context),
+                          const Expanded(child: SizedBox()),
+                          _buildPointerModeSwitcher(context),
+                          const Expanded(child: SizedBox()),
+                        ],
+                      )))
             ]));
     // );
   }
@@ -208,28 +227,42 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
     ];
   }
 
-  Future<void> _captureAndSave() async {
+  Future<void> _save(int id) async {
+    setState(() {
+      isSaving = true;
+    });
     try {
-      RenderRepaintBoundary boundary = _globalKey.currentContext!
-          .findRenderObject() as RenderRepaintBoundary;
-      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-      ByteData? byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
-      Uint8List pngBytes = byteData!.buffer.asUint8List();
+      for (int i = 0; i < _globalKeys.length; i++) {
+        RenderRepaintBoundary boundary = _globalKeys[i]
+            .currentContext!
+            .findRenderObject() as RenderRepaintBoundary;
+        ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+        ByteData? byteData =
+            await image.toByteData(format: ui.ImageByteFormat.png);
+        Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-      // 파일 시스템 경로 찾기
-      final directory = await getApplicationDocumentsDirectory();
-      final imagePath = '${directory.path}/1/my_scribble_image.png';
+        // 파일 시스템 경로 찾기
+        final directory = await getApplicationDocumentsDirectory();
+        final imagePath = '${directory.path}/$id/images/page_${i + 1}.png';
+        // print(directory.path);
+        // print('ddd');
+        // return;
 
-      await File(imagePath).writeAsBytes(pngBytes);
+        await File(imagePath).writeAsBytes(pngBytes);
 
-      // 이미지 저장
-      // final result = await ImageGallerySaver.saveImage(pngBytes,
-      //     quality: 100, name: "my_scribble_image");
+        // 이미지 저장
+        // final result = await ImageGallerySaver.saveImage(pngBytes,
+        //     quality: 100, name: "my_scribble_image");
+      }
       print("Image saved");
     } catch (e) {
       print("Error saving image: $e");
     }
+    Navigator.pop(context);
+
+    setState(() {
+      isSaving = false;
+    });
   }
 
   void _showImage(BuildContext context, Uint8List imageFile) async {
