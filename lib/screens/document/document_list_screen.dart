@@ -135,6 +135,19 @@ class _DocumentListState extends State<DocumentListScreen> {
     });
   }
 
+  // 문서 삭제
+  Future<void> _removeDocument(int id) async {
+    final dr = DocumentRepository();
+    final fm = FileManagement();
+
+    await dr.remove(id);
+    await fm.removeDocument(id);
+
+    setState(() {
+      _documents?.removeWhere((e) => e['id'] == id);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -335,7 +348,71 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                                 ),
                                                               ),
                                                             )),
-                                                child: const Text('이름 수정')),
+                                                child: const Text('문서 이름 수정')),
+                                            TextButton(
+                                                onPressed: () => showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext
+                                                                context) =>
+                                                            Dialog(
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        8.0),
+                                                                child: Column(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    const Text(
+                                                                        '문서 삭제'),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            15),
+                                                                    Container(
+                                                                        width:
+                                                                            400,
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            10.0),
+                                                                        child: Text(
+                                                                            '해당 문서를 삭제하시겠습니까?')),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            15),
+                                                                    Container(
+                                                                        width:
+                                                                            300,
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceEvenly,
+                                                                          children: [
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                _removeDocument(element['id']);
+                                                                                Navigator.of(context).popUntil((route) => route.isFirst);
+                                                                              },
+                                                                              child: const Text('삭제'),
+                                                                            ),
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.pop(context);
+                                                                              },
+                                                                              child: const Text('취소'),
+                                                                            )
+                                                                          ],
+                                                                        ))
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            )),
+                                                child: const Text('문서 삭제')),
                                             const SizedBox(height: 15),
                                             TextButton(
                                               onPressed: () {

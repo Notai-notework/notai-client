@@ -93,4 +93,17 @@ class FileManagement {
     print('file images saved!');
     print(Directory(basePath));
   }
+
+  Future<void> removeDocument(int id) async {
+    Directory directory = await getApplicationDocumentsDirectory();
+    Directory path = Directory("${directory.path}/$id");
+
+    if (await path.exists()) {
+      // 내부 파일과 하위 디렉토리 삭제
+      await path.delete(recursive: true);
+      print('폴더와 내부 파일이 성공적으로 삭제되었습니다.');
+    } else {
+      print('지정한 경로에 폴더가 존재하지 않습니다.');
+    }
+  }
 }

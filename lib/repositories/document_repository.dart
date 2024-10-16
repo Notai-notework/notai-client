@@ -108,6 +108,11 @@ class DocumentRepository {
     return 1;
   }
 
+  Future<void> remove(int id) async {
+    final db = await database;
+    await db.delete('document', where: 'id = ?', whereArgs: [id]);
+  }
+
   // 현재 시간
   String _getCurrentTimestamp() {
     return DateTime.now().toIso8601String();
