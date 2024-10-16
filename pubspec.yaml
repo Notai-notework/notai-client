@@ -13,12 +13,12 @@ dependencies:
   cupertino_icons: ^1.0.6
   http: ^1.2.2
   google_fonts: ^6.2.1
-  file_picker:
+  file_picker: ^8.1.2
   pdf_image_renderer: ^0.6.0
-  path_provider:
-  sqflite:
+  path_provider: ^2.1.4
+  sqflite: ^2.4.0
   scribble: ^0.10.0+1
-  image:
+  image: ^4.2.0
   image_gallery_saver: ^1.7.1
 
 dev_dependencies:
