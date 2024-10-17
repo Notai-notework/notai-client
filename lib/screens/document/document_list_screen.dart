@@ -224,7 +224,7 @@ class _DocumentListState extends State<DocumentListScreen> {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
                       if (element != null && element.containsKey('id')) {
-                        return DocumentInnerScreen(documentId: element['id']);
+                        return DocumentInnerScreen(document: element);
                       } else {
                         // element가 null이거나 id가 없으면 에러 처리 혹은 다른 로직 실행
                         return Container(); // ErrorScreen은 예시이며, 상황에 맞는 다른 위젯을 반환할 수 있습니다.
