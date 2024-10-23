@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:pdf_image_renderer/pdf_image_renderer.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class FileManagement {
   static final FileManagement _instance = FileManagement._internal();
@@ -37,6 +39,9 @@ class FileManagement {
     int pageCount = await pdf.getPageCount();
     for (int i = 0; i < pageCount; i++) {
       final size = await pdf.getPageSize(pageIndex: i);
+      print("${i} ${size.width}");
+      print("${i} ${size.height}");
+
       final img = await pdf.renderPage(
         pageIndex: i,
         x: 0,
@@ -92,6 +97,65 @@ class FileManagement {
 
     print('file images saved!');
     print(Directory(basePath));
+  }
+
+  // 페이지 이미지들을 pdf로 병합
+  Future<void> convertImagesToPdf(
+      int id, String fileName, List<List<double>> sizes) async {
+    final pdf = pw.Document();
+
+    Directory directory = await getApplicationDocumentsDirectory();
+    String path = "${directory.path}/$id/images";
+
+    List<FileSystemEntity> pdfs = Directory("${directory.path}/$id").listSync(); // 해당 폴더의 파일 목록
+
+    // .pdf 파일만 선택하여 삭제
+    for (var file in pdfs) {
+      if (file is File && file.path.endsWith('.pdf')) {
+        try {
+          await file.delete(); // 파일 삭제
+          print('Deleted: ${file.path}');
+        } catch (e) {
+          print('Error deleting file: ${file.path}, error: $e');
+        }
+      }
+    }
+
+    List<FileSystemEntity> files = Directory(path).listSync(); // 해당 폴더의 파일 목록
+
+    // PNG 파일만 필터링
+    List<File> pngFiles = files
+        .whereType<File>()
+        .where((file) => file.path.endsWith('.png'))
+        .toList();
+
+    pngFiles.sort((a, b) => a.path.compareTo(b.path)); // 정렬
+
+    // 각 PNG 파일을 PDF의 페이지로 추가
+    for (int i = 0; i < pngFiles.length; i++) {
+      final image = pw.MemoryImage(
+        File(pngFiles[i].path).readAsBytesSync(), // PNG 파일을 바이트로 읽기
+      );
+
+      // PDF에 페이지 추가
+      pdf.addPage(
+        pw.Page(
+          build: (pw.Context context) {
+            return pw.Center(
+              child: pw.Image(image, width: sizes[i][0], height: sizes[i][1]),
+            );
+          },
+        ),
+      );
+    }
+
+    // PDF 저장 경로 설정
+    String pdfPath = '${directory.path}/$id/$fileName.pdf';
+    final outputFile = File(pdfPath);
+
+    // PDF 파일 저장
+    await outputFile.writeAsBytes(await pdf.save());
+    print("PDF 파일이 생성되었습니다: $pdfPath");
   }
 
   Future<void> removeDocument(int id) async {

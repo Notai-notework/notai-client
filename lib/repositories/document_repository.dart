@@ -80,7 +80,7 @@ class DocumentRepository {
   Future<int> insert(String fileName) async {
     final db = await database;
     Map<String, dynamic> document = {};
-    document['name'] = fileName;
+    document['name'] = fileName.split('.').first;
     document['is_bookmark'] = 0;
     document['created_at'] = _getCurrentTimestamp();
     document['updated_at'] = _getCurrentTimestamp();

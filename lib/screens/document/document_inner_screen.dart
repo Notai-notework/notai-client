@@ -7,9 +7,10 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+// import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:notai/screens/login/login_screen.dart';
 import 'package:notai/utils/color/color.dart';
+import 'package:notai/utils/file/file_management.dart';
 import 'package:notai/utils/http/api_service.dart';
 import 'package:notai/utils/time/time_parser.dart';
 import 'package:notai/widgets/document/custom_notifier.dart';
@@ -71,7 +72,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
 
     _images = images;
     notifier = List.generate(_images.length,
-        (index) => CustomNotifier([1, 3, 5], ScribblePointerMode.penOnly));
+        (index) => CustomNotifier([1, 3, 5], ScribblePointerMode.all));
 
     _controller.addListener(() {
       setState(() {
@@ -346,7 +347,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               // 뒤로가기 버튼 눌렀을 때 이벤트 처리
-              _save(widget.document['id']);
+              _save(widget.document['id'], widget.document['name']);
             },
           ),
           actions: [
@@ -421,17 +422,18 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
                                     },
                                     itemCount: _images.length,
                                     itemBuilder: (context, index) {
+                                      print(_imagesSizes[index]);
                                       return Center(
                                           child: InteractiveViewer(
-                                        boundaryMargin:
-                                            const EdgeInsets.all(20.0),
+                                        // boundaryMargin:
+                                        //     const EdgeInsets.all(20.0),
                                         minScale: 1.0,
                                         maxScale: 4.0,
                                         child: RepaintBoundary(
                                             key: _globalKeys[index],
                                             child: Container(
-                                              // width: 450,
-                                              // height: 640,
+                                              // width: 2480,
+                                              // height: 3508,
                                               width: _imagesSizes[index][0],
                                               height: _imagesSizes[index][1],
                                               decoration: BoxDecoration(
@@ -439,7 +441,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
                                                   image: DecorationImage(
                                                       image: MemoryImage(
                                                           _images[index]),
-                                                      fit: BoxFit.contain)),
+                                                      fit: BoxFit.fitHeight)),
                                               child: Scribble(
                                                   notifier: notifier[index]),
                                             )),
@@ -556,7 +558,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
     ];
   }
 
-  Future<void> _save(int id) async {
+  Future<void> _save(int id, String fileName) async {
     setState(() {
       isSaving = true;
     });
@@ -570,8 +572,13 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
             await image.toByteData(format: ui.ImageByteFormat.png);
         Uint8List pngBytes = byteData!.buffer.asUint8List();
 
+        // 지정한 크기로 조정 (size.width, size.height에 맞게)
+        // pngBytes = await resizeImage(
+        //     pngBytes, ui.Size(_imagesSizes[i][0], _imagesSizes[i][1]));
+
         // 파일 시스템 경로 찾기
         final directory = await getApplicationDocumentsDirectory();
+        print(directory.path);
         final imagePath = '${directory.path}/$id/images/page_${i + 1}.png';
         // print(directory.path);
         // print('ddd');
@@ -587,11 +594,40 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
     } catch (e) {
       print("Error saving image: $e");
     }
+
+    final fm = await FileManagement();
+    await fm.convertImagesToPdf(id, fileName, _imagesSizes);
+
     Navigator.pop(context);
 
     setState(() {
       isSaving = false;
     });
+  }
+
+  // 이미지 크기 조정 함수
+  Future<Uint8List> resizeImage(Uint8List pngBytes, Size size) async {
+    // 이미지 로드
+    ui.Codec codec = await ui.instantiateImageCodec(pngBytes);
+    ui.FrameInfo frameInfo = await codec.getNextFrame();
+    ui.Image originalImage = frameInfo.image;
+
+    // 새 크기로 조정
+    ui.PictureRecorder recorder = ui.PictureRecorder();
+    ui.Canvas canvas = ui.Canvas(recorder);
+
+    // 새 크기에 맞게 그리기
+    canvas.drawImage(originalImage, ui.Offset(0, 0), ui.Paint());
+
+    // 이미지 생성
+    ui.Image newImage = await recorder
+        .endRecording()
+        .toImage(size.width.toInt(), size.height.toInt());
+
+    // 새로운 이미지 바이트 데이터로 변환
+    ByteData? newByteData =
+        await newImage.toByteData(format: ui.ImageByteFormat.png);
+    return newByteData!.buffer.asUint8List();
   }
 
   void _showImage(BuildContext context, Uint8List imageFile) async {
