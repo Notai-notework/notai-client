@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import '../../utils/color/color.dart';
-import '../../widgets/login/cancel_button.dart';
 import '../../widgets/login/login_form.dart';
-import '../../widgets/login/register_form.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -72,87 +69,16 @@ class _LoginScreenState extends State<LoginScreen>
                     color: kPrimaryColor),
               )),
 
-          // Cancel Button
-          CancelButton(
-            isLogin: isLogin,
-            animationDuration: animationDuration,
-            size: size,
-            animationController: animationController,
-            tapEvent: isLogin
-                ? null
-                : () {
-                    // returning null to disable the button
-                    animationController!.reverse();
-                    setState(() {
-                      isLogin = !isLogin;
-                    });
-                  },
-          ),
 
-          // Login Form
           LoginForm(
               isLogin: isLogin,
               animationDuration: animationDuration,
               size: size,
               defaultLoginSize: defaultLoginSize),
 
-          // Register Container
-          AnimatedBuilder(
-            animation: animationController!,
-            builder: (context, child) {
-              if (viewInset == 0 && isLogin) {
-                return buildRegisterContainer();
-              } else if (!isLogin) {
-                return buildRegisterContainer();
-              }
-
-              // Returning empty container to hide the widget
-              return Container();
-            },
-          ),
-
-          // Register Form
-          RegisterForm(
-              isLogin: isLogin,
-              animationDuration: animationDuration,
-              size: size,
-              defaultLoginSize: defaultRegisterSize),
         ],
       ),
     );
   }
 
-  Widget buildRegisterContainer() {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        width: double.infinity,
-        height: containerSize.value,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(100),
-              topRight: Radius.circular(100),
-            ),
-            color: kBackgroundColor),
-        alignment: Alignment.center,
-        child: GestureDetector(
-          onTap: !isLogin
-              ? null
-              : () {
-                  animationController!.forward();
-
-                  setState(() {
-                    isLogin = !isLogin;
-                  });
-                },
-          child: isLogin
-              ? Text(
-                  "Don't have an account? Sign up",
-                  style: TextStyle(color: kPrimaryColor, fontSize: 18),
-                )
-              : null,
-        ),
-      ),
-    );
-  }
 }

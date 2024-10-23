@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class AuthService {
+class LoginAuthService {
   final String apiUrl = 'http://localhost:8080/login'; // Spring Boot 서버 URL
 
   Future<String?> login(String email, String password) async {
