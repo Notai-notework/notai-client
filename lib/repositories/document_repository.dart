@@ -113,6 +113,17 @@ class DocumentRepository {
     await db.delete('document', where: 'id = ?', whereArgs: [id]);
   }
 
+  // 북마크 업데이트
+  Future<int> updateBookmark(int id) async {
+    final db = await database;
+    Map<String, dynamic> found = await findById(id);
+    await db.update(
+        'document', {'is_bookmark': found['is_bookmark'] == 0 ? 1 : 0},
+        where: 'id = ?', whereArgs: [id]);
+
+    return found['is_bookmark'] == 0 ? 1 : 0;
+  }
+
   // 현재 시간
   String _getCurrentTimestamp() {
     return DateTime.now().toIso8601String();
