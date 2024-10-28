@@ -1,14 +1,14 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class SignUpAuthService {
+class SignUpAuthorization {
   final String apiUrl = 'http://localhost:8080/login';
 
   Future<void> signUpUser({
     required String email,
     required String password,
     required String name,
-    required String phoneNumber,
+    required String phone_number,
     required String nickname,
     required String address,
   }) async {
@@ -16,7 +16,7 @@ class SignUpAuthService {
       "email": email,
       "password": password,
       "name": name,
-      "phoneNumber": phoneNumber,
+      "phone_number": phone_number,
       "nickname": nickname,
       "address": address,
     };

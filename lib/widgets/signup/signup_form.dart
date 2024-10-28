@@ -7,7 +7,6 @@ import 'package:notai/widgets/signup/signupButton/rounded_nickname_input.dart';
 import 'package:notai/widgets/signup/signupButton/rounded_pw_check_input.dart';
 import 'package:notai/widgets/signup/signupButton/sign_up_clear_elevatedButton.dart';
 import 'package:notai/widgets/signup/signupButton/nickname_check_button.dart';
-import '../../utils/auth/login_authorization.dart';
 import '../../utils/auth/sign_up_authorization.dart';
 import '../../utils/color/color.dart';
 import '../global/everyLoginButton/rounded_name_input.dart';
@@ -40,7 +39,7 @@ class _SignUpFormState extends State<SignUpForm> {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController nickNameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
-  final SignUpAuthService signUpService = SignUpAuthService();
+  final SignUpAuthorization signUpService = SignUpAuthorization();
 
 
   @override
@@ -155,7 +154,14 @@ class _SignUpFormState extends State<SignUpForm> {
                 ),
                 SizedBox(height: 10),
                 SignUpClearElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {signUpService.signUpUser(
+                    email: emailController.text,
+                    password: passwordController.text,
+                    name: nameController.text,
+                    phone_number: phoneNumberController.text,
+                    nickname: nickNameController.text,
+                    address: addressController.text,
+                  );},
                   buttonText: "회원가입완료",
                 ),
               ],
