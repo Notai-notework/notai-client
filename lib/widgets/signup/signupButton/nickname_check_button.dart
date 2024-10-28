@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../utils/color/color.dart';
 
-class EmailAuthElevatedButton extends StatelessWidget {
+class NickNameCheckButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String buttonText;
 
-  const EmailAuthElevatedButton({
+  const NickNameCheckButton({
     Key? key,
     required this.onPressed,
     required this.buttonText,
@@ -24,7 +24,7 @@ class EmailAuthElevatedButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         child: Text(
-          "이메일인증",
+          "중복확인",
           style: TextStyle(
             fontSize: 13,
             // fontWeight: FontWeight.bold,

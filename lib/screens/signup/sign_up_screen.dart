@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../utils/color/color.dart';
-import '../../widgets/login/login_form.dart';
 import '../../widgets/signup/signup_form.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -36,15 +35,16 @@ class _SignUpScreenState extends State<SignUpScreen>
     double viewInset = MediaQuery.of(context)
         .viewInsets
         .bottom; // we are using this to determine Keyboard is opened or not
-    double defaultLoginSize = size.height - (size.height * 0.2);
-    double defaultRegisterSize = size.height - (size.height * 0.1);
+    double defaultLoginSize = size.height - (size.height * 0.01);
+    double defaultRegisterSize = size.height - (size.height * 0.01);
 
     containerSize =
         Tween<double>(begin: size.height * 0.1, end: defaultRegisterSize)
             .animate(CurvedAnimation(
-            parent: animationController!, curve: Curves.linear));
+                parent: animationController!, curve: Curves.linear));
 
     return Scaffold(
+      backgroundColor: twoColor,
       body: SingleChildScrollView(
         child: Stack(
           children: [
@@ -71,18 +71,16 @@ class _SignUpScreenState extends State<SignUpScreen>
                       color: kPrimaryColor),
                 )),
 
+            //왼쪽, 오른쪽 원형 디자인
 
             SignUpForm(
                 isLogin: isLogin,
                 animationDuration: animationDuration,
                 size: size,
                 defaultLoginSize: defaultLoginSize),
-
           ],
         ),
       ),
     );
   }
-
 }
-

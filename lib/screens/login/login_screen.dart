@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen>
     double viewInset = MediaQuery.of(context)
         .viewInsets
         .bottom; // we are using this to determine Keyboard is opened or not
-    double defaultLoginSize = size.height - (size.height * 0.2);
+    double defaultLoginSize = size.height - (size.height * 0.1);
     double defaultRegisterSize = size.height - (size.height * 0.1);
 
     containerSize =
@@ -44,6 +44,7 @@ class _LoginScreenState extends State<LoginScreen>
                 parent: animationController!, curve: Curves.linear));
 
     return Scaffold(
+      backgroundColor: twoColor,
       body: Stack(
         children: [
           // Lets add some decorations
@@ -69,16 +70,15 @@ class _LoginScreenState extends State<LoginScreen>
                     color: kPrimaryColor),
               )),
 
+          //왼쪽, 오른쪽 원형 디자인
 
           LoginForm(
               isLogin: isLogin,
               animationDuration: animationDuration,
               size: size,
               defaultLoginSize: defaultLoginSize),
-
         ],
       ),
     );
   }
-
 }

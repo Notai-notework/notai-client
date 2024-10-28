@@ -16,7 +16,7 @@ class RoundedEmailInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       // margin: EdgeInsets.symmetric(vertical: 10),
-      margin: EdgeInsets.fromLTRB(200, 10, 100, 10),
+      margin: EdgeInsets.fromLTRB(100, 10, 10, 10),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
       decoration: BoxDecoration(
         color: Colors.white,

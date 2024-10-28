@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../../screens/find/find_all_screen.dart';
+import '../../../screens/find/find_id_screen.dart';
 import '../../../utils/color/color.dart';
 
-class FindElevatedButton extends StatelessWidget {
+class FindIdElevatedButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String buttonText;
 
-  const FindElevatedButton({
+  const FindIdElevatedButton({
     super.key,
     required this.onPressed,
     required this.buttonText,
@@ -18,7 +18,7 @@ class FindElevatedButton extends StatelessWidget {
       onPressed: (){
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const FindAllScreen()),
+          MaterialPageRoute(builder: (context) => FindIdScreen()),
         );      },
       style: ElevatedButton.styleFrom(
           backgroundColor: threeColor,

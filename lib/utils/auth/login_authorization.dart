@@ -21,10 +21,9 @@ class LoginAuthService {
       print('Password: $password');
 
       if (response.statusCode == 200) {
-        // 서버에서 토큰을 받는다고 가정
         String? token = response.headers['authorization'];
         print('Login successful! Token: $token');
-        return token;  // 토큰 반환
+        return token;
       } else {
         print('Login failed with status: ${response.statusCode}');
         return null;

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import '../../utils/auth/login_authorization.dart';
 import '../../utils/color/color.dart';
-import '../find/findButton/find_elevatedbutton.dart';
+import '../find/findAllButton/find_elevatedbutton.dart';
 import '../global/everyLoginButton/rounded_input.dart';
 import '../global/everyLoginButton/rounded_password_input.dart';
 import '../signup/signupButton/signup_elevatedbutton.dart';
@@ -52,28 +51,26 @@ class _LoginFormState extends State<LoginForm> {
           height: widget.defaultLoginSize,
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'login',
+                  '로그인',
                   style: TextStyle(
                       shadows: [
-                        Shadow(
-                          color: Colors.black,
-                          // Choose the color of the shadow
-                          blurRadius: 2.0,
-                          // Adjust the blur radius for the shadow effect
-                          offset: Offset(2.0,
-                              2.0), // Set the horizontal and vertical offset for the shadow
-                        ),
+                        // Shadow(
+                        //   color: Colors.black,
+                        //   // 그림자 색상 설정
+                        //   blurRadius: 1.0,
+                        //   // 그림자 이펙트
+                        //   offset: Offset(2.0, 2.0), // 그림자 가로 세로 조정
+                        // ),
                       ],
                       color: titleColor,
                       fontWeight: FontWeight.w800,
-                      fontSize: 65),
+                      fontSize: 60),
                 ),
                 SizedBox(height: 50),
-                SvgPicture.asset('utils/images/login.svg'),
                 // 이메일 입력 필드
                 RoundedInput(
                   icon: Icons.mail,
