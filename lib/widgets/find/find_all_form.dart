@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:notai/widgets/signup/signupButton/email_auth_elevatedButton.dart';
-import 'package:notai/widgets/signup/signupButton/number_auth_elevatedButton.dart';
 import 'package:notai/widgets/signup/signupButton/rounded_email_imput.dart';
-import 'package:notai/widgets/signup/signupButton/rounded_address_input.dart';
-import 'package:notai/widgets/signup/signupButton/rounded_nickname_input.dart';
-import 'package:notai/widgets/signup/signupButton/rounded_pw_check_input.dart';
-import 'package:notai/widgets/signup/signupButton/sign_up_clear_elevatedButton.dart';
-import 'package:notai/widgets/signup/signupButton/nickname_check_button.dart';
 import '../../utils/auth/login_authorization.dart';
-import '../../utils/auth/sign_up_authorization.dart';
 import '../../utils/color/color.dart';
 import '../global/everyLoginButton/rounded_name_input.dart';
 import '../global/everyLoginButton/rounded_number_input.dart';
-import '../global/everyLoginButton/rounded_password_input.dart';
+import '../signup/signupButton/number_auth_elevatedButton.dart';
+import 'findIdButton/find_id_elevatedbutton.dart';
+import 'findPwButton/find_pw_elevatedbutton.dart';
 
-class SignUpForm extends StatefulWidget {
-  const SignUpForm({
+class FindAllForm extends StatefulWidget {
+  const FindAllForm({
     Key? key,
     required this.isLogin,
     required this.animationDuration,
@@ -29,19 +24,29 @@ class SignUpForm extends StatefulWidget {
   final double defaultLoginSize;
 
   @override
-  _SignUpFormState createState() => _SignUpFormState();
+  _FindAllFormState createState() => _FindAllFormState();
 }
 
-class _SignUpFormState extends State<SignUpForm> {
+class _FindAllFormState extends State<FindAllForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController passwordCheckController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController findidnameController = TextEditingController();
+  final TextEditingController findpwnameController = TextEditingController();
+  final TextEditingController findidphoneNumberController = TextEditingController();
+  final TextEditingController findpwphoneNumberController = TextEditingController();
   final TextEditingController nickNameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
-  final SignUpAuthService signUpService = SignUpAuthService();
 
+  final LoginAuthService authService =
+      LoginAuthService(); // AuthService 인스턴스 생성
+
+  Future<void> login() async {
+    String? token = await authService.login(
+      emailController.text,
+      passwordController.text,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,14 +73,46 @@ class _SignUpFormState extends State<SignUpForm> {
                   ),
                 ),
                 Text(
-                  '회원가입',
+                  '아이디 찾기',
                   style: TextStyle(
                       color: titleColor,
                       fontWeight: FontWeight.w800,
                       fontSize: 60),
                 ),
-                SizedBox(height: 30),
-                // SvgPicture.asset('utils/images/login.svg'),
+                RoundedNameInput(
+                  hint: 'name',
+                  controller: findidnameController, // 컨트롤러 연결
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      flex: 3, // 전체 공간에서 3/4 크기 할당
+                      child: RoundedNumberInput(
+                        hint: 'phone number',
+                        controller: findidphoneNumberController, // 컨트롤러 연결
+                      ),
+                    ),
+                    Flexible(
+                      child: NumberAuthElevatedButton(
+                        onPressed: () {},
+                        buttonText: '',
+                      ),
+                    ),
+                  ],
+                ),
+                FindIdElevatedButton(
+                  onPressed: () {},
+                  buttonText: "아이디 찾기",
+                ),
+                SizedBox(height: 50),
+                Text(
+                  '비밀번호 찾기',
+                  style: TextStyle(
+                      color: titleColor,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 60),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -95,21 +132,10 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                   ],
                 ),
-                RoundedPasswordInput(
-                  hint: 'password',
-                  controller: passwordController, // 컨트롤러 연결
-                ),
-                SizedBox(height: 10),
-                RoundedPwCheckInput(
-                  hint: 'password check',
-                  controller: passwordCheckController, // 컨트롤러 연결
-                ),
-                SizedBox(height: 10),
                 RoundedNameInput(
                   hint: 'name',
-                  controller: nameController, // 컨트롤러 연결
+                  controller: findpwnameController, // 컨트롤러 연결
                 ),
-                SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -117,7 +143,7 @@ class _SignUpFormState extends State<SignUpForm> {
                       flex: 3, // 전체 공간에서 3/4 크기 할당
                       child: RoundedNumberInput(
                         hint: 'phone number',
-                        controller: phoneNumberController, // 컨트롤러 연결
+                        controller: findpwphoneNumberController, // 컨트롤러 연결
                       ),
                     ),
                     Flexible(
@@ -128,35 +154,9 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      flex: 3, // 전체 공간에서 3/4 크기 할당
-                      child: RoundedNicknameInput(
-                        hint: 'nickname',
-                        controller: nickNameController, // 컨트롤러 연결
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1, // 전체 공간에서 1/4 크기 할당
-                      child: NickNameCheckButton(
-                        onPressed: () {},
-                        buttonText: '',
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                RoundedAddressInput(
-                  hint: 'address',
-                  controller: addressController, // 컨트롤러 연결
-                ),
-                SizedBox(height: 10),
-                SignUpClearElevatedButton(
+                FindPwElevatedButton(
                   onPressed: () {},
-                  buttonText: "회원가입완료",
+                  buttonText: "비밀번호 찾기",
                 ),
               ],
             ),

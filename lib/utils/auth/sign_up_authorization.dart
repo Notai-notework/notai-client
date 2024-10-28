@@ -1,35 +1,40 @@
-import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SignUpAuthService {
-  final String apiUrl = 'http://localhost:8080/login'; // Spring Boot 서버 URL
+  final String apiUrl = 'http://localhost:8080/login';
 
-  Future<String?> signUp(String email, String password) async {
+  Future<void> signUpUser({
+    required String email,
+    required String password,
+    required String name,
+    required String phoneNumber,
+    required String nickname,
+    required String address,
+  }) async {
+    Map<String, dynamic> userData = {
+      "email": email,
+      "password": password,
+      "name": name,
+      "phoneNumber": phoneNumber,
+      "nickname": nickname,
+      "address": address,
+    };
 
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'email': email,
-        'password': password,
-      }),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(userData),
+      );
 
-    print('Email: $email');
-    print('Password: $password');
-
-    if (response.statusCode == 200) {
-      // 서버에서 토큰을 받는다고 가정
-      String? token = response.headers['authorization'];
-      print('Login successful! Token: $token');
-      return token;  // 토큰 반환
-    } else {
-      print('Login failed with status: ${response.statusCode}');
-      return null;
+      if (response.statusCode == 200) {
+        print("회원가입 성공!");
+      } else {
+        print("회원가입 실패: 상태 코드 ${response.statusCode}");
+      }
+    } catch (e) {
+      print("오류 발생: $e");
     }
-
   }
 }
-

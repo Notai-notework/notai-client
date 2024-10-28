@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import '../../../screens/login/login_screen.dart';
 import '../../../utils/color/color.dart';
 
-class EmailAuthElevatedButton extends StatelessWidget {
+class NewPwChangeClearButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String buttonText;
 
-  const EmailAuthElevatedButton({
+  const NewPwChangeClearButton({
     Key? key,
     required this.onPressed,
     required this.buttonText,
@@ -14,7 +15,7 @@ class EmailAuthElevatedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(0, 10, 100, 10),
+      margin: EdgeInsets.fromLTRB(100, 10, 100, 10),
       // child: IconButton(
       //   onPressed: onPressed,
       //   icon: Icon(Icons.check_circle_sharp),
@@ -22,9 +23,17 @@ class EmailAuthElevatedButton extends StatelessWidget {
       //   color: threeColor,
       // )
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => LoginScreen()),
+            // 비밀번호 변경하면 변경완료 모달창 뜨고 로그인 화면으로 이동.
+            // 버튼 누르면 비밀번호 변경되도록 코드 추가
+          );
+        },
         child: Text(
-          "이메일인증",
+          "변경 완료",
           style: TextStyle(
             fontSize: 13,
             // fontWeight: FontWeight.bold,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class RoundedNameInput extends StatelessWidget {
+class NewPwInputCheck extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
 
-  const RoundedNameInput({
+  const NewPwInputCheck({
     super.key,
     required this.hint,
     required this.controller,
@@ -22,8 +22,9 @@ class RoundedNameInput extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
+        obscureText: true, // 비밀번호 입력 시 텍스트 숨김 처리
         decoration: InputDecoration(
-          icon: Icon(Icons.abc_rounded, color: Colors.grey),
+          icon: Icon(Icons.lock, color: Colors.grey),
           hintText: hint,
           border: InputBorder.none,
         ),
