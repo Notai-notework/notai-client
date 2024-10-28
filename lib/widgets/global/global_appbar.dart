@@ -46,14 +46,14 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: titleColor,
-      leading: widget.leading ??
-          IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              // 기본 뒤로가기 버튼 동작
-              Navigator.of(context).pop();
-            },
-          ),
+      // leading: widget.leading ??
+      //     IconButton(
+      //       icon: Icon(Icons.arrow_back),
+      //       onPressed: () {
+      //         // 기본 뒤로가기 버튼 동작
+      //         Navigator.of(context).pop();
+      //       },
+      //     ),
       title: widget.title ??
           Center(
               child: Text(

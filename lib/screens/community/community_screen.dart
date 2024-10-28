@@ -1,98 +1,75 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class CommunityScreen extends StatefulWidget {
+  const CommunityScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'NOTAI',
-      home: Grade(),
-    );
-  }
+  State<CommunityScreen> createState() => _CommunityScreenState();
 }
 
-class Grade extends StatelessWidget {
-  const Grade({super.key});
+class _CommunityScreenState extends State<CommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 179, 69, 199),
-        title: const Text(
-          '커뮤니티',
-          style: TextStyle(
-            color: Colors.white,
-            letterSpacing: 2.0,
-            fontSize: 30,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                child: const Text('최신순'),
+              ),
+              const SizedBox(width: 20),
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                child: const Text('인기순'),
+              ),
+              const SizedBox(width: 20),
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                child: const Text('스크랩'),
+              ),
+              const Spacer(),
+              const SizedBox(
+                width: 300,
+                child: SearchBar(
+                  trailing: [Icon(Icons.search)],
+                  backgroundColor:
+                      WidgetStatePropertyAll<Color>(Color(0xFFF5EFFF)),
+                  hintText: "검색어를 입력해주세요.",
+                ),
+              ),
+            ],
           ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.max,
+          const SizedBox(height: 20),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
               children: [
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  child: const Text('최신순'),
-                ),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  child: const Text('인기순'),
-                ),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  child: const Text('스크랩'),
-                ),
-                const Spacer(),
-                const SizedBox(
-                  width: 300,
-                  child: SearchBar(
-                    trailing: [Icon(Icons.search)],
-                    backgroundColor:
-                    WidgetStatePropertyAll<Color>(Color(0xFFF5EFFF)),
-                    hintText: "검색어를 입력해주세요.",
-                  ),
-                ),
+                for (var i = 0; i < 3; i++) const DocumentItem(),
               ],
             ),
-            const SizedBox(height: 20),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  for (var i = 0; i < 3; i++) const DocumentItem(),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

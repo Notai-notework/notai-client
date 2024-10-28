@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notai/screens/community/community_screen.dart';
 import 'package:notai/screens/document/document_list_screen.dart';
 import 'package:notai/utils/color/color.dart';
 import 'package:notai/widgets/global/global_appbar.dart';
@@ -16,7 +17,7 @@ class _MainScreen extends State<MainScreen> {
   // 바텀 네비게이션 탭에 대한 페이지 리스트
   static final List<Widget> _pages = <Widget>[
     const DocumentListScreen(),
-    const Center(child: Text('community')),
+    const CommunityScreen(),
     const Center(child: Text('bookmark')),
   ];
 
