@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:notai/utils/http/api_service.dart';
 import '../../utils/auth/login_authorization.dart';
 import '../../utils/color/color.dart';
 import '../find/findAllButton/find_elevatedbutton.dart';
@@ -33,10 +36,18 @@ class _LoginFormState extends State<LoginForm> {
       LoginAuthService(); // AuthService 인스턴스 생성
 
   Future<void> login() async {
-    String? token = await authService.login(
-      emailController.text,
-      passwordController.text,
-    );
+    final api = await ApiService();
+    Response response = await api
+        .post("/login", data: {"email": "a@test.com", "password": "1234"});
+
+    if (response.statusCode == 200) {
+      String? access = response.headers['Authorization']![0];
+      String? refresh = response.headers['refresh']![0];
+
+      final storage = await FlutterSecureStorage();
+      await storage.write(key: "Authorization", value: access);
+      await storage.write(key: "refresh", value: refresh);
+    }
   }
 
   @override
@@ -54,6 +65,15 @@ class _LoginFormState extends State<LoginForm> {
               // crossAxisAlignment: CrossAxisAlignment.center,
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.pop(context); // 뒤로 가기
+                    },
+                  ),
+                ),
                 Text(
                   '로그인',
                   style: TextStyle(
