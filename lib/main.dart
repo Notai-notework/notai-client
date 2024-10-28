@@ -6,7 +6,6 @@ import 'package:notai/screens/main_screen.dart';
 import 'package:notai/utils/color/color.dart';
 import 'screens/login/login_screen.dart';
 
-
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
