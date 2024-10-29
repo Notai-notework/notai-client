@@ -68,7 +68,7 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
                   padding: EdgeInsets.all(10),
                   child: TextButton(
                       onPressed: () async {
-                        if (!isLoggedIn) {
+                        if (isLoggedIn) {
                           final storage = await FlutterSecureStorage();
                           storage.delete(key: "Authorization");
                           storage.delete(key: "refresh");
