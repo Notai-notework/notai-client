@@ -13,7 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../main.dart';
 
 class ApiService {
-  late final Dio dio;
+  late Dio dio;
   final String? baseUrl = dotenv.env['API_BASE_URL'];
   Map<String, dynamic> fileForm = {};
 
@@ -28,7 +28,9 @@ class ApiService {
   }
 
   Future<void> _init() async {
-    dio = Dio(); // dio 초기화
+    if (!_isInitialized) {
+      dio = Dio();
+    }
 
     // 로깅
     dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
@@ -133,11 +135,16 @@ class ApiService {
 
       // 도큐먼트 폴더 경로 가져오기 (예시로 문서 폴더)
       Directory appDocDir = await getApplicationDocumentsDirectory();
-      String filePath =
-          "${appDocDir.path}/$id/$name.pdf"; // 올릴 파일 경로 설정 (파일명 수정)
+      List files = Directory("${appDocDir.path}/$id/").listSync();
 
-      // 업로드할 파일 준비
-      String fileName = filePath.split('/').last; // 파일명 추출
+      // PDF 파일만 필터링하여 첫 번째 PDF 파일 경로 가져오기
+      final pdfFile = files.firstWhere(
+        (file) => file.path.endsWith('.pdf'),
+        orElse: () => throw Exception("PDF 파일이 없습니다."),
+      );
+
+      String filePath = pdfFile.path;
+
       File file = File(filePath);
 
       if (!await file.exists()) {
@@ -148,7 +155,7 @@ class ApiService {
       // FormData에 파일과 함께 추가 데이터를 넣음
       FormData formData = FormData.fromMap({
         "documentFile":
-            await MultipartFile.fromFile(filePath, filename: fileName),
+            await MultipartFile.fromFile(filePath, filename: "$name.pdf"),
         "title": name, // 추가 데이터
         "content": content,
         "tagName": tagName
