@@ -523,7 +523,7 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                       );
                                                       return;
                                                     }
-                                                    () => showDialog(
+                                                    showDialog(
                                                         context: context,
                                                         builder: (BuildContext
                                                                 context) =>
