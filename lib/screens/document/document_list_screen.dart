@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:notai/repositories/document_repository.dart';
 import 'package:notai/screens/document/document_inner_screen.dart';
+import 'package:notai/screens/login/login_screen.dart';
 import 'package:notai/utils/color/color.dart';
 import 'package:notai/utils/file/file_management.dart';
 import 'package:file_picker/file_picker.dart';
@@ -27,6 +28,7 @@ class _DocumentListState extends State<DocumentListScreen> {
   bool isLoggedIn = false;
   Map<String, dynamic> payload = {};
   bool isUploading = false;
+  List<ValueNotifier<bool>> _bookmarks = [];
 
   late final List<TextEditingController> _documentNameInputControllers;
 
@@ -134,6 +136,12 @@ class _DocumentListState extends State<DocumentListScreen> {
       _documentNameInputControllers = result
           .map((item) => TextEditingController(text: item['name']))
           .toList();
+
+      for (var e in _documents!) {
+        _bookmarks.add(ValueNotifier(e['is_bookmark'] == 1));
+      }
+
+      // print(_bookmarks);
     });
   }
 
@@ -292,482 +300,538 @@ class _DocumentListState extends State<DocumentListScreen> {
                         ),
                         borderRadius: BorderRadius.circular(10), // 모서리 둥글기
                       ),
-                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
                       width: 180,
                       height: 220,
-                      child: Column(
-                        children: [
-                          FutureBuilder(
-                              future: _getPreviewImage(element['id']),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return CircularProgressIndicator(); // 로딩 중인 경우
-                                } else if (snapshot.hasError) {
-                                  return Text(
-                                      'Error: ${snapshot.error}'); // 에러가 발생한 경우
-                                }
-                                return Expanded(
-                                    child: Image.file(
-                                  fit: BoxFit.contain,
-                                  snapshot.data!,
-                                  width: double.infinity,
-                                )); // 이미지를 성공적으로 가져온 경우
-                              }),
-                          TextButton(
-                              onPressed: () => showDialog<String>(
-                                    context: context,
-                                    builder: (BuildContext context) => Dialog(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            const SizedBox(height: 15),
-                                            Text(element['name'],
-                                                style: TextStyle(fontSize: 20)),
-                                            const SizedBox(height: 15),
-                                            TextButton(
-                                                onPressed: () => showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext
-                                                                context) =>
-                                                            Dialog(
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        8.0),
-                                                                child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .min,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    const Text(
-                                                                        '문서 이름 수정'),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            15),
-                                                                    Container(
-                                                                        width:
-                                                                            400,
-                                                                        padding: const EdgeInsets
-                                                                            .all(
-                                                                            10.0),
-                                                                        child:
-                                                                            TextField(
-                                                                          controller:
-                                                                              _documentNameInputControllers[index],
-                                                                          decoration:
-                                                                              const InputDecoration(
-                                                                            border:
-                                                                                OutlineInputBorder(),
-                                                                          ),
-                                                                        )),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            15),
-                                                                    Container(
-                                                                        width:
-                                                                            300,
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceEvenly,
-                                                                          children: [
-                                                                            TextButton(
-                                                                              style: ButtonStyle(
-                                                                                backgroundColor: WidgetStateProperty.all(twoColor),
-                                                                                // 배경 색
-                                                                                padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
-                                                                                shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                                                                                  borderRadius: BorderRadius.circular(8), // 둥근 모서리
-                                                                                )),
-                                                                              ),
-                                                                              onPressed: () {
-                                                                                _modifyDocumentName(element['id'], _documentNameInputControllers[index].text, index);
-                                                                                Navigator.of(context).popUntil((route) => route.isFirst);
-                                                                              },
-                                                                              child: const Text('저장'),
-                                                                            ),
-                                                                            TextButton(
-                                                                              onPressed: () {
-                                                                                Navigator.pop(context);
-                                                                              },
-                                                                              child: const Text('닫기'),
-                                                                            )
-                                                                          ],
-                                                                        ))
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            )),
-                                                child: const Text('문서 이름 수정')),
-                                            TextButton(
-                                                onPressed: () => showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext
-                                                                context) =>
-                                                            Dialog(
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        8.0),
-                                                                child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .min,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    const Text(
-                                                                        '문서 삭제'),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            15),
-                                                                    Container(
-                                                                        width:
-                                                                            400,
-                                                                        padding: const EdgeInsets
-                                                                            .all(
-                                                                            10.0),
-                                                                        child: Text(
-                                                                            '해당 문서를 삭제하시겠습니까?')),
-                                                                    const SizedBox(
-                                                                        height:
-                                                                            15),
-                                                                    Container(
-                                                                        width:
-                                                                            300,
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceEvenly,
-                                                                          children: [
-                                                                            TextButton(
-                                                                              style: ButtonStyle(
-                                                                                backgroundColor: WidgetStateProperty.all(twoColor),
-                                                                                // 배경 색
-                                                                                padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
-                                                                                shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                                                                                  borderRadius: BorderRadius.circular(8), // 둥근 모서리
-                                                                                )),
-                                                                              ),
-                                                                              onPressed: () {
-                                                                                _removeDocument(element['id']);
-                                                                                Navigator.of(context).popUntil((route) => route.isFirst);
-                                                                              },
-                                                                              child: const Text('삭제'),
-                                                                            ),
-                                                                            TextButton(
-                                                                              onPressed: () {
-                                                                                Navigator.pop(context);
-                                                                              },
-                                                                              child: const Text('취소'),
-                                                                            )
-                                                                          ],
-                                                                        ))
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            )),
-                                                child: const Text('문서 삭제')),
-                                            TextButton(
-                                                onPressed: () => showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext
-                                                            context) =>
-                                                        Dialog(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: Column(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                Container(
-                                                                    width: 900,
-                                                                    height: 450,
-                                                                    child: Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .spaceBetween,
-                                                                      children: [
-                                                                        FutureBuilder(
-                                                                            future:
-                                                                                _getPreviewImage(element['id']),
-                                                                            builder: (context, snapshot) {
-                                                                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                                                                return CircularProgressIndicator(); // 로딩 중인 경우
-                                                                              } else if (snapshot.hasError) {
-                                                                                return Text('Error: ${snapshot.error}'); // 에러가 발생한 경우
-                                                                              }
-                                                                              return Container(
-                                                                                  width: 300,
-                                                                                  height: 350,
-                                                                                  // color: Colors.pink,
-                                                                                  child: Center(
-                                                                                      child: Image.file(
-                                                                                    fit: BoxFit.contain,
-                                                                                    snapshot.data!,
-                                                                                    width: double.infinity,
-                                                                                  ))); // 이미지를 성공적으로 가져온 경우
-                                                                            }),
-                                                                        Container(
+                      child: Stack(children: [
+                        Column(
+                          children: [
+                            FutureBuilder(
+                                future: _getPreviewImage(element['id']),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return CircularProgressIndicator(); // 로딩 중인 경우
+                                  } else if (snapshot.hasError) {
+                                    return Text(
+                                        'Error: ${snapshot.error}'); // 에러가 발생한 경우
+                                  }
+                                  return Expanded(
+                                      child: Image.file(
+                                    fit: BoxFit.contain,
+                                    snapshot.data!,
+                                    width: double.infinity,
+                                  )); // 이미지를 성공적으로 가져온 경우
+                                }),
+                            TextButton(
+                                onPressed: () => showDialog<String>(
+                                      context: context,
+                                      builder: (BuildContext context) => Dialog(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              const SizedBox(height: 15),
+                                              Text(element['name'],
+                                                  style:
+                                                      TextStyle(fontSize: 20)),
+                                              const SizedBox(height: 15),
+                                              TextButton(
+                                                  onPressed: () => showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (BuildContext
+                                                                  context) =>
+                                                              Dialog(
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          8.0),
+                                                                  child: Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      const Text(
+                                                                          '문서 이름 수정'),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              15),
+                                                                      Container(
                                                                           width:
-                                                                              600,
-                                                                          child: Padding(
-                                                                              padding: EdgeInsets.fromLTRB(30, 40, 20, 20),
-                                                                              child: Column(
-                                                                                children: [
-                                                                                  SizedBox(
-                                                                                      width: double.infinity,
-                                                                                      child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                                                                        Text(
-                                                                                          element['name'],
-                                                                                          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                                                                              400,
+                                                                          padding: const EdgeInsets
+                                                                              .all(
+                                                                              10.0),
+                                                                          child:
+                                                                              TextField(
+                                                                            controller:
+                                                                                _documentNameInputControllers[index],
+                                                                            decoration:
+                                                                                const InputDecoration(
+                                                                              border: OutlineInputBorder(),
+                                                                            ),
+                                                                          )),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              15),
+                                                                      Container(
+                                                                          width:
+                                                                              300,
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceEvenly,
+                                                                            children: [
+                                                                              TextButton(
+                                                                                style: ButtonStyle(
+                                                                                  backgroundColor: WidgetStateProperty.all(twoColor),
+                                                                                  // 배경 색
+                                                                                  padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
+                                                                                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                                                                                    borderRadius: BorderRadius.circular(8), // 둥근 모서리
+                                                                                  )),
+                                                                                ),
+                                                                                onPressed: () {
+                                                                                  _modifyDocumentName(element['id'], _documentNameInputControllers[index].text, index);
+                                                                                  Navigator.of(context).popUntil((route) => route.isFirst);
+                                                                                },
+                                                                                child: const Text('저장'),
+                                                                              ),
+                                                                              TextButton(
+                                                                                onPressed: () {
+                                                                                  Navigator.pop(context);
+                                                                                },
+                                                                                child: const Text('닫기'),
+                                                                              )
+                                                                            ],
+                                                                          ))
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              )),
+                                                  child:
+                                                      const Text('문서 이름 수정')),
+                                              TextButton(
+                                                  onPressed: () => showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (BuildContext
+                                                                  context) =>
+                                                              Dialog(
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          8.0),
+                                                                  child: Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      const Text(
+                                                                          '문서 삭제'),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              15),
+                                                                      Container(
+                                                                          width:
+                                                                              400,
+                                                                          padding: const EdgeInsets
+                                                                              .all(
+                                                                              10.0),
+                                                                          child:
+                                                                              Text('해당 문서를 삭제하시겠습니까?')),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              15),
+                                                                      Container(
+                                                                          width:
+                                                                              300,
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceEvenly,
+                                                                            children: [
+                                                                              TextButton(
+                                                                                style: ButtonStyle(
+                                                                                  backgroundColor: WidgetStateProperty.all(twoColor),
+                                                                                  // 배경 색
+                                                                                  padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
+                                                                                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                                                                                    borderRadius: BorderRadius.circular(8), // 둥근 모서리
+                                                                                  )),
+                                                                                ),
+                                                                                onPressed: () {
+                                                                                  _removeDocument(element['id']);
+                                                                                  Navigator.of(context).popUntil((route) => route.isFirst);
+                                                                                },
+                                                                                child: const Text('삭제'),
+                                                                              ),
+                                                                              TextButton(
+                                                                                onPressed: () {
+                                                                                  Navigator.pop(context);
+                                                                                },
+                                                                                child: const Text('취소'),
+                                                                              )
+                                                                            ],
+                                                                          ))
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              )),
+                                                  child: const Text('문서 삭제')),
+                                              TextButton(
+                                                  onPressed: () {
+                                                    if (!isLoggedIn) {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return AlertDialog(
+                                                            content: SizedBox(
+                                                                height: 100,
+                                                                child: Center(
+                                                                    child: Text(
+                                                                        "로그인이 필요합니다"))),
+                                                            actions: [
+                                                              TextButton(
+                                                                onPressed: () {
+                                                                  Navigator.pushReplacement(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              LoginScreen())); // 모달 창 닫기
+                                                                },
+                                                                child: Center(
+                                                                    child: Text(
+                                                                        '확인')),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      );
+                                                      return;
+                                                    }
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            Dialog(
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        8.0),
+                                                                child: Column(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Container(
+                                                                        width:
+                                                                            900,
+                                                                        height:
+                                                                            450,
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            FutureBuilder(
+                                                                                future: _getPreviewImage(element['id']),
+                                                                                builder: (context, snapshot) {
+                                                                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                                                                    return CircularProgressIndicator(); // 로딩 중인 경우
+                                                                                  } else if (snapshot.hasError) {
+                                                                                    return Text('Error: ${snapshot.error}'); // 에러가 발생한 경우
+                                                                                  }
+                                                                                  return Container(
+                                                                                      width: 300,
+                                                                                      height: 350,
+                                                                                      // color: Colors.pink,
+                                                                                      child: Center(
+                                                                                          child: Image.file(
+                                                                                        fit: BoxFit.contain,
+                                                                                        snapshot.data!,
+                                                                                        width: double.infinity,
+                                                                                      ))); // 이미지를 성공적으로 가져온 경우
+                                                                                }),
+                                                                            Container(
+                                                                              width: 600,
+                                                                              child: Padding(
+                                                                                  padding: EdgeInsets.fromLTRB(30, 40, 20, 20),
+                                                                                  child: Column(
+                                                                                    children: [
+                                                                                      SizedBox(
+                                                                                          width: double.infinity,
+                                                                                          child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                                                                            Text(
+                                                                                              element['name'],
+                                                                                              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                                                                                            ),
+                                                                                            Text(
+                                                                                              "작성자: ${payload['name']}",
+                                                                                              style: TextStyle(fontSize: 20),
+                                                                                            )
+                                                                                          ])),
+                                                                                      SizedBox(height: 20),
+                                                                                      TextField(
+                                                                                        controller: _descInput,
+                                                                                        maxLines: 3,
+                                                                                        // 최대 줄 수 설정
+                                                                                        decoration: InputDecoration(
+                                                                                          border: OutlineInputBorder(),
+                                                                                          hintText: '해당 문서에 대한 간단한 소개를 입력해주세요..',
                                                                                         ),
-                                                                                        Text(
-                                                                                          "작성자: ${payload['name']}",
-                                                                                          style: TextStyle(fontSize: 20),
-                                                                                        )
-                                                                                      ])),
-                                                                                  SizedBox(height: 20),
-                                                                                  TextField(
-                                                                                    controller: _descInput,
-                                                                                    maxLines: 3,
-                                                                                    // 최대 줄 수 설정
-                                                                                    decoration: InputDecoration(
-                                                                                      border: OutlineInputBorder(),
-                                                                                      hintText: '해당 문서에 대한 간단한 소개를 입력해주세요..',
-                                                                                    ),
-                                                                                    keyboardType: TextInputType.multiline, // 키보드 타입 설정
-                                                                                  ),
-                                                                                  SizedBox(height: 20),
-                                                                                  TextField(
-                                                                                    controller: _tagInput,
-                                                                                    maxLines: 1,
-                                                                                    // 최대 줄 수 설정
-                                                                                    decoration: InputDecoration(
-                                                                                      border: OutlineInputBorder(),
-                                                                                      hintText: '해시태그를 입력해주세요.. (ex. 수학)',
-                                                                                    ),
-                                                                                    keyboardType: TextInputType.multiline, // 키보드 타입 설정
-                                                                                  ),
-                                                                                  SizedBox(height: 30),
-                                                                                  SizedBox(
-                                                                                      width: double.infinity,
-                                                                                      child: Row(
-                                                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                                                        children: [
-                                                                                          SizedBox(
-                                                                                              width: 200,
-                                                                                              child: TextButton(
-                                                                                                style: ButtonStyle(
-                                                                                                  backgroundColor: WidgetStateProperty.all(threeColor),
-                                                                                                  // 배경 색
-                                                                                                  padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
-                                                                                                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                                                                                                    borderRadius: BorderRadius.circular(8), // 둥근 모서리
-                                                                                                  )),
-                                                                                                ),
-                                                                                                onPressed: () {
-                                                                                                  if (_descInput.text.isEmpty || _tagInput.text.isEmpty) {
-                                                                                                    showDialog(
-                                                                                                      context: context,
-                                                                                                      builder: (BuildContext context) {
-                                                                                                        return AlertDialog(
-                                                                                                          // title: Text(''),
-                                                                                                          content: SizedBox(
-                                                                                                              height: 100,
-                                                                                                              child: Center(
-                                                                                                                  child: Text(
-                                                                                                                '내용을 입력해주세요',
-                                                                                                                style: TextStyle(fontSize: 20),
-                                                                                                              ))),
-                                                                                                          actions: [
-                                                                                                            TextButton(
-                                                                                                              onPressed: () {
-                                                                                                                Navigator.of(context).pop(); // 모달 창 닫기
-                                                                                                              },
-                                                                                                              child: Center(child: Text('닫기')),
-                                                                                                            ),
-                                                                                                          ],
-                                                                                                        );
-                                                                                                      },
-                                                                                                    );
-                                                                                                    return;
-                                                                                                  }
-                                                                                                  showDialog(
-                                                                                                      context: context,
-                                                                                                      builder: (context) => Dialog(
-                                                                                                            child: Padding(
-                                                                                                              padding: const EdgeInsets.all(8.0),
-                                                                                                              child: Column(
-                                                                                                                mainAxisSize: MainAxisSize.min,
-                                                                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                                                                children: [
-                                                                                                                  const SizedBox(height: 15),
-                                                                                                                  const Text(
-                                                                                                                    '문서 공유',
+                                                                                        keyboardType: TextInputType.multiline, // 키보드 타입 설정
+                                                                                      ),
+                                                                                      SizedBox(height: 20),
+                                                                                      TextField(
+                                                                                        controller: _tagInput,
+                                                                                        maxLines: 1,
+                                                                                        // 최대 줄 수 설정
+                                                                                        decoration: InputDecoration(
+                                                                                          border: OutlineInputBorder(),
+                                                                                          hintText: '해시태그를 입력해주세요.. (ex. 수학)',
+                                                                                        ),
+                                                                                        keyboardType: TextInputType.multiline, // 키보드 타입 설정
+                                                                                      ),
+                                                                                      SizedBox(height: 30),
+                                                                                      SizedBox(
+                                                                                          width: double.infinity,
+                                                                                          child: Row(
+                                                                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                                            children: [
+                                                                                              SizedBox(
+                                                                                                  width: 200,
+                                                                                                  child: TextButton(
+                                                                                                    style: ButtonStyle(
+                                                                                                      backgroundColor: WidgetStateProperty.all(threeColor),
+                                                                                                      // 배경 색
+                                                                                                      padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
+                                                                                                      shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                                                                                                        borderRadius: BorderRadius.circular(8), // 둥근 모서리
+                                                                                                      )),
+                                                                                                    ),
+                                                                                                    onPressed: () {
+                                                                                                      if (_descInput.text.isEmpty || _tagInput.text.isEmpty) {
+                                                                                                        showDialog(
+                                                                                                          context: context,
+                                                                                                          builder: (BuildContext context) {
+                                                                                                            return AlertDialog(
+                                                                                                              // title: Text(''),
+                                                                                                              content: SizedBox(
+                                                                                                                  height: 100,
+                                                                                                                  child: Center(
+                                                                                                                      child: Text(
+                                                                                                                    '내용을 입력해주세요',
                                                                                                                     style: TextStyle(fontSize: 20),
+                                                                                                                  ))),
+                                                                                                              actions: [
+                                                                                                                TextButton(
+                                                                                                                  onPressed: () {
+                                                                                                                    Navigator.of(context).pop(); // 모달 창 닫기
+                                                                                                                  },
+                                                                                                                  child: Center(child: Text('닫기')),
+                                                                                                                ),
+                                                                                                              ],
+                                                                                                            );
+                                                                                                          },
+                                                                                                        );
+                                                                                                        return;
+                                                                                                      }
+                                                                                                      showDialog(
+                                                                                                          context: context,
+                                                                                                          builder: (context) => Dialog(
+                                                                                                                child: Padding(
+                                                                                                                  padding: const EdgeInsets.all(8.0),
+                                                                                                                  child: Column(
+                                                                                                                    mainAxisSize: MainAxisSize.min,
+                                                                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                                                                    children: [
+                                                                                                                      const SizedBox(height: 15),
+                                                                                                                      const Text(
+                                                                                                                        '문서 공유',
+                                                                                                                        style: TextStyle(fontSize: 20),
+                                                                                                                      ),
+                                                                                                                      const SizedBox(height: 15),
+                                                                                                                      Container(width: 400, padding: const EdgeInsets.all(10.0), child: Center(child: Text('해당 문서를 공유 하시겠습니까?'))),
+                                                                                                                      const SizedBox(height: 15),
+                                                                                                                      Container(
+                                                                                                                          width: 300,
+                                                                                                                          child: isUploading
+                                                                                                                              ? Center(child: CircularProgressIndicator())
+                                                                                                                              : Row(
+                                                                                                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                                                                                  children: [
+                                                                                                                                    TextButton(
+                                                                                                                                      style: ButtonStyle(
+                                                                                                                                        backgroundColor: WidgetStateProperty.all(twoColor),
+                                                                                                                                        // 배경 색
+                                                                                                                                        padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
+                                                                                                                                        shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                                                                                                                                          borderRadius: BorderRadius.circular(8), // 둥근 모서리
+                                                                                                                                        )),
+                                                                                                                                      ),
+                                                                                                                                      onPressed: () async {
+                                                                                                                                        showDialog(
+                                                                                                                                          context: context,
+                                                                                                                                          builder: (BuildContext context) {
+                                                                                                                                            return AlertDialog(
+                                                                                                                                              // title: Text(''),
+                                                                                                                                              content: SizedBox(height: 100, child: Center(child: CircularProgressIndicator())),
+                                                                                                                                            );
+                                                                                                                                          },
+                                                                                                                                        );
+
+                                                                                                                                        setState(() {
+                                                                                                                                          isUploading = true;
+                                                                                                                                        });
+
+                                                                                                                                        final as = await ApiService();
+                                                                                                                                        var response = await as.uploadDocument(element['id'], _descInput.text, _tagInput.text);
+
+                                                                                                                                        setState(() {
+                                                                                                                                          isUploading = false;
+                                                                                                                                          _descInput.text = "";
+                                                                                                                                          _tagInput.text = "";
+                                                                                                                                        });
+
+                                                                                                                                        Navigator.of(context).pop();
+
+                                                                                                                                        showDialog(
+                                                                                                                                          context: context,
+                                                                                                                                          builder: (BuildContext context) {
+                                                                                                                                            return AlertDialog(
+                                                                                                                                              // title: Text(''),
+                                                                                                                                              content: SizedBox(height: 100, child: Center(child: Text("등록 되었습니다"))),
+                                                                                                                                              actions: [
+                                                                                                                                                if (!isUploading)
+                                                                                                                                                  TextButton(
+                                                                                                                                                    onPressed: () {
+                                                                                                                                                      Navigator.of(context).popUntil((route) => route.isFirst); // 모달 창 닫기
+                                                                                                                                                    },
+                                                                                                                                                    child: Center(child: Text('닫기')),
+                                                                                                                                                  ),
+                                                                                                                                              ],
+                                                                                                                                            );
+                                                                                                                                          },
+                                                                                                                                        );
+                                                                                                                                      },
+                                                                                                                                      child: const Text('확인'),
+                                                                                                                                    ),
+                                                                                                                                    TextButton(
+                                                                                                                                      onPressed: () {
+                                                                                                                                        Navigator.pop(context);
+                                                                                                                                      },
+                                                                                                                                      child: const Text('취소'),
+                                                                                                                                    )
+                                                                                                                                  ],
+                                                                                                                                ))
+                                                                                                                    ],
                                                                                                                   ),
-                                                                                                                  const SizedBox(height: 15),
-                                                                                                                  Container(width: 400, padding: const EdgeInsets.all(10.0), child: Center(child: Text('해당 문서를 공유 하시겠습니까?'))),
-                                                                                                                  const SizedBox(height: 15),
-                                                                                                                  Container(
-                                                                                                                      width: 300,
-                                                                                                                      child: isUploading
-                                                                                                                          ? Center(child: CircularProgressIndicator())
-                                                                                                                          : Row(
-                                                                                                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                                                                                              children: [
-                                                                                                                                TextButton(
-                                                                                                                                  style: ButtonStyle(
-                                                                                                                                    backgroundColor: WidgetStateProperty.all(twoColor),
-                                                                                                                                    // 배경 색
-                                                                                                                                    padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
-                                                                                                                                    shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                                                                                                                                      borderRadius: BorderRadius.circular(8), // 둥근 모서리
-                                                                                                                                    )),
-                                                                                                                                  ),
-                                                                                                                                  onPressed: () async {
-                                                                                                                                    showDialog(
-                                                                                                                                      context: context,
-                                                                                                                                      builder: (BuildContext context) {
-                                                                                                                                        return AlertDialog(
-                                                                                                                                          // title: Text(''),
-                                                                                                                                          content: SizedBox(height: 100, child: Center(child: CircularProgressIndicator())),
-                                                                                                                                        );
-                                                                                                                                      },
-                                                                                                                                    );
-
-                                                                                                                                    setState(() {
-                                                                                                                                      isUploading = true;
-                                                                                                                                    });
-
-                                                                                                                                    final as = await ApiService();
-                                                                                                                                    var response = await as.uploadDocument(element['id'], _descInput.text, _tagInput.text);
-
-                                                                                                                                    setState(() {
-                                                                                                                                      isUploading = false;
-                                                                                                                                      _descInput.text = "";
-                                                                                                                                      _tagInput.text = "";
-                                                                                                                                    });
-
-                                                                                                                                    Navigator.of(context).pop();
-
-                                                                                                                                    showDialog(
-                                                                                                                                      context: context,
-                                                                                                                                      builder: (BuildContext context) {
-                                                                                                                                        return AlertDialog(
-                                                                                                                                          // title: Text(''),
-                                                                                                                                          content: SizedBox(height: 100, child: Center(child: Text("등록 되었습니다"))),
-                                                                                                                                          actions: [
-                                                                                                                                            if (!isUploading)
-                                                                                                                                              TextButton(
-                                                                                                                                                onPressed: () {
-                                                                                                                                                  Navigator.of(context).popUntil((route) => route.isFirst); // 모달 창 닫기
-                                                                                                                                                },
-                                                                                                                                                child: Center(child: Text('닫기')),
-                                                                                                                                              ),
-                                                                                                                                          ],
-                                                                                                                                        );
-                                                                                                                                      },
-                                                                                                                                    );
-                                                                                                                                  },
-                                                                                                                                  child: const Text('확인'),
-                                                                                                                                ),
-                                                                                                                                TextButton(
-                                                                                                                                  onPressed: () {
-                                                                                                                                    Navigator.pop(context);
-                                                                                                                                  },
-                                                                                                                                  child: const Text('취소'),
-                                                                                                                                )
-                                                                                                                              ],
-                                                                                                                            ))
-                                                                                                                ],
-                                                                                                              ),
-                                                                                                            ),
-                                                                                                          ));
-                                                                                                  // await ApiService().uploadDocument(element['id']);
-                                                                                                },
-                                                                                                child: const Text('공유하기'),
-                                                                                              )),
-                                                                                          SizedBox(
-                                                                                              width: 200,
-                                                                                              child: TextButton(
-                                                                                                style: ButtonStyle(
-                                                                                                  backgroundColor: WidgetStateProperty.all(twoColor),
-                                                                                                  // 배경 색
-                                                                                                  padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
-                                                                                                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                                                                                                    borderRadius: BorderRadius.circular(8), // 둥근 모서리
+                                                                                                                ),
+                                                                                                              ));
+                                                                                                      // await ApiService().uploadDocument(element['id']);
+                                                                                                    },
+                                                                                                    child: const Text('공유하기'),
                                                                                                   )),
-                                                                                                ),
-                                                                                                onPressed: () {
-                                                                                                  Navigator.pop(context);
-                                                                                                },
-                                                                                                child: const Text('취소'),
-                                                                                              ))
-                                                                                        ],
-                                                                                      ))
-                                                                                ],
-                                                                              )),
-                                                                        )
-                                                                      ],
-                                                                    ))
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        )),
-                                                child: const Text('문서 공유')),
-                                            const SizedBox(height: 15),
-                                            TextButton(
-                                              style: ButtonStyle(
-                                                backgroundColor:
-                                                    WidgetStateProperty.all(
-                                                        twoColor),
-                                                // 배경 색
-                                                padding:
-                                                    WidgetStateProperty.all(
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 12,
-                                                            horizontal: 24)),
-                                                shape: WidgetStateProperty.all(
-                                                    RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8), // 둥근 모서리
-                                                )),
+                                                                                              SizedBox(
+                                                                                                  width: 200,
+                                                                                                  child: TextButton(
+                                                                                                    style: ButtonStyle(
+                                                                                                      backgroundColor: WidgetStateProperty.all(twoColor),
+                                                                                                      // 배경 색
+                                                                                                      padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
+                                                                                                      shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                                                                                                        borderRadius: BorderRadius.circular(8), // 둥근 모서리
+                                                                                                      )),
+                                                                                                    ),
+                                                                                                    onPressed: () {
+                                                                                                      Navigator.pop(context);
+                                                                                                    },
+                                                                                                    child: const Text('취소'),
+                                                                                                  ))
+                                                                                            ],
+                                                                                          ))
+                                                                                    ],
+                                                                                  )),
+                                                                            )
+                                                                          ],
+                                                                        ))
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ));
+                                                  },
+                                                  child: const Text('문서 공유')),
+                                              const SizedBox(height: 15),
+                                              TextButton(
+                                                style: ButtonStyle(
+                                                  backgroundColor:
+                                                      WidgetStateProperty.all(
+                                                          twoColor),
+                                                  // 배경 색
+                                                  padding:
+                                                      WidgetStateProperty.all(
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 12,
+                                                              horizontal: 24)),
+                                                  shape: WidgetStateProperty.all(
+                                                      RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8), // 둥근 모서리
+                                                  )),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text('닫기'),
                                               ),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text('닫기'),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                              child: Text(element['name']))
-                        ],
-                      )));
+                                child: Text(element['name']))
+                          ],
+                        ),
+                        Positioned(
+                            top: -10,
+                            right: 0,
+                            child: IconButton(
+                              icon: Icon(
+                                element['is_bookmark'] == 0
+                                    ? Icons.star_outline
+                                    : Icons.star,
+                                size: 30,
+                                color: Colors.yellow,
+                              ),
+                              onPressed: () async {
+                                final dr = await DocumentRepository();
+                                int result =
+                                    await dr.updateBookmark(element['id']);
+                                setState(() {
+                                  element['is_bookmark'] = result;
+                                });
+                              },
+                            ))
+                      ])));
             })
         ])));
   }

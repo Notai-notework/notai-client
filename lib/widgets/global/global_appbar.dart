@@ -63,22 +63,39 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
           )),
       actions: widget.actions ??
           [
+            if (isLoggedIn)
+              Padding(
+                  padding: EdgeInsets.all(10),
+                  child: TextButton(
+                      onPressed: () async {
+                        if (isLoggedIn) {
+                          final storage = await FlutterSecureStorage();
+                          storage.delete(key: "Authorization");
+                          storage.delete(key: "refresh");
+                          setState(() {
+                            isLoggedIn = false;
+                          });
+                        }
+                      },
+                      child: Text('로그아웃',
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600)))),
             Padding(
                 padding: EdgeInsets.all(10),
                 child: TextButton(
-                    onPressed: () {
-                      if (!isLoggedIn) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginScreen()));
-                      }
+                    onPressed: () async {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()));
                     },
-                    child: Text(isLoggedIn ? payload['name'] : '로그인',
+                    child: Text(isLoggedIn ? "${payload['name']} 님" : '로그인',
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
-                            fontWeight: FontWeight.w600))))
+                            fontWeight: FontWeight.w600)))),
           ],
     );
   }

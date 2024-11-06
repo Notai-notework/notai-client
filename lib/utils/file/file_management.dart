@@ -1,5 +1,8 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:notai/repositories/document_repository.dart';
+import 'package:notai/utils/http/api_service.dart';
 import 'package:pdf_image_renderer/pdf_image_renderer.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
@@ -13,6 +16,22 @@ class FileManagement {
 
   factory FileManagement() {
     return _instance;
+  }
+
+  Future<void> saveDownloadedDocument(
+      String downloadUrl, Map<String, dynamic> data) async {
+    final dr = await DocumentRepository();
+    int id = await dr.insert(data['title']);
+
+    Directory directory = await getApplicationDocumentsDirectory();
+    String basePath = "${directory.path}/$id";
+
+    Response response =
+        await Dio().download(downloadUrl, "$basePath/${data['title']}.pdf");
+
+    if (response.statusCode == 200) {
+      await saveDocument(id, "$basePath/${data['title']}.pdf", data['title']);
+    }
   }
 
   // 문서를 로컬에 저장
@@ -107,7 +126,8 @@ class FileManagement {
     Directory directory = await getApplicationDocumentsDirectory();
     String path = "${directory.path}/$id/images";
 
-    List<FileSystemEntity> pdfs = Directory("${directory.path}/$id").listSync(); // 해당 폴더의 파일 목록
+    List<FileSystemEntity> pdfs =
+        Directory("${directory.path}/$id").listSync(); // 해당 폴더의 파일 목록
 
     // .pdf 파일만 선택하여 삭제
     for (var file in pdfs) {
