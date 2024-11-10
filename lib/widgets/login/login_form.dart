@@ -1,6 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../utils/auth/login_authorization.dart';
 import '../../utils/color/color.dart';
+import '../../utils/http/api_service.dart';
 import '../find/findAllButton/find_elevatedbutton.dart';
 import '../global/everyLoginButton/rounded_input.dart';
 import '../global/everyLoginButton/rounded_password_input.dart';
@@ -29,16 +32,21 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final LoginAuthService authService =
-      LoginAuthService(); // AuthService 인스턴스 생성
-
   Future<void> login() async {
-    String? token = await authService.login(
-      emailController.text,
-      passwordController.text,
-    );
-  }
+    final api = await ApiService();
+    Response response = await api.post("/login", data: {
+      "email": emailController.text,
+      "password": passwordController.text});
 
+    if (response.statusCode == 200) {
+      String? access = response.headers['Authorization']![0];
+      String? refresh = response.headers['refresh']![0];
+
+      final storage = await FlutterSecureStorage();
+      await storage.write(key: "Authorization", value: access);
+      await storage.write(key: "refresh", value: refresh);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return AnimatedOpacity(
@@ -51,9 +59,16 @@ class _LoginFormState extends State<LoginForm> {
           height: widget.defaultLoginSize,
           child: SingleChildScrollView(
             child: Column(
-              // crossAxisAlignment: CrossAxisAlignment.center,
-              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.pop(context); // 뒤로 가기
+                    },
+                  ),
+                ),
                 Text(
                   '로그인',
                   style: TextStyle(
@@ -93,9 +108,9 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                     SizedBox(width: 20),
                     LoginElevatedButton(
-                      onPressed: () {
-                        login();
-                      },
+                      onPressed:
+                        login,
+
                       buttonText: "로그인",
                     ),
                     SizedBox(width: 20),

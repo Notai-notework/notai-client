@@ -296,6 +296,12 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
     _fetchImages(widget.document['id']);
     _pageController = PageController();
     _checkUser();
+    delete();
+  }
+
+  Future<void> delete() async {
+    final fr = FlutterSecureStorage();
+    fr.delete(key: "Authorization");
   }
 
   Future<void> _checkUser() async {

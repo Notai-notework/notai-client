@@ -38,15 +38,15 @@ class _FindAllFormState extends State<FindAllForm> {
   final TextEditingController nickNameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
 
-  final LoginAuthService authService =
-      LoginAuthService(); // AuthService 인스턴스 생성
+  // final LoginAuthService authService =ㄷ
+  //     LoginAuthService(); // AuthService 인스턴스 생성
 
-  Future<void> login() async {
-    String? token = await authService.login(
-      emailController.text,
-      passwordController.text,
-    );
-  }
+  // Future<void> login() async {
+  //   String? token = await authService.login(
+  //     emailController.text,
+  //     passwordController.text,
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -93,12 +93,12 @@ class _FindAllFormState extends State<FindAllForm> {
                         controller: findidphoneNumberController, // 컨트롤러 연결
                       ),
                     ),
-                    Flexible(
-                      child: NumberAuthElevatedButton(
-                        onPressed: () {},
-                        buttonText: '',
-                      ),
-                    ),
+                    // Flexible(
+                    //   child: NumberAuthElevatedButton(
+                    //     onPressed: () {},
+                    //     buttonText: '',
+                    //   ),
+                    // ),
                   ],
                 ),
                 FindIdElevatedButton(
@@ -146,12 +146,12 @@ class _FindAllFormState extends State<FindAllForm> {
                         controller: findpwphoneNumberController, // 컨트롤러 연결
                       ),
                     ),
-                    Flexible(
-                      child: NumberAuthElevatedButton(
-                        onPressed: () {},
-                        buttonText: '',
-                      ),
-                    ),
+                    // Flexible(
+                    //   child: NumberAuthElevatedButton(
+                    //     onPressed: () {},
+                    //     buttonText: '',
+                    //   ),
+                    // ),
                   ],
                 ),
                 FindPwElevatedButton(

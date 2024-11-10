@@ -4,12 +4,14 @@ class RoundedEmailInput extends StatelessWidget {
   final IconData icon;
   final String hint;
   final TextEditingController controller;
+  final bool islocked;
 
   const RoundedEmailInput({
     Key? key,
     required this.icon,
     required this.hint,
     required this.controller,
+    this.islocked = false,
   }) : super(key: key);
 
   @override
@@ -23,6 +25,7 @@ class RoundedEmailInput extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
       ),
       child: TextField(
+        enabled: !islocked,
         controller: controller,
         decoration: InputDecoration(
           icon: Icon(icon, color: Colors.grey),

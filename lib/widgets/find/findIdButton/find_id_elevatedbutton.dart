@@ -18,6 +18,7 @@ class FindIdElevatedButton extends StatelessWidget {
       onPressed: (){
         Navigator.push(
           context,
+          // MaterialPageRoute(builder: (context) => FindIdScreen(email: "dd")),
           MaterialPageRoute(builder: (context) => FindIdScreen()),
         );      },
       style: ElevatedButton.styleFrom(

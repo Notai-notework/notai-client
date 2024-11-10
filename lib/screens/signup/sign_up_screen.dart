@@ -35,8 +35,8 @@ class _SignUpScreenState extends State<SignUpScreen>
     double viewInset = MediaQuery.of(context)
         .viewInsets
         .bottom; // we are using this to determine Keyboard is opened or not
-    double defaultLoginSize = size.height - (size.height * 0.01);
-    double defaultRegisterSize = size.height - (size.height * 0.01);
+    double defaultLoginSize = size.height - (size.height * 0.1);
+    double defaultRegisterSize = size.height - (size.height * 0.1);
 
     containerSize =
         Tween<double>(begin: size.height * 0.1, end: defaultRegisterSize)

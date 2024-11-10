@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../screens/login/login_screen.dart';
 import '../../../utils/color/color.dart';
 
 class SignUpClearElevatedButton extends StatelessWidget {
@@ -16,11 +15,7 @@ class SignUpClearElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => LoginScreen()), //회원가입완료하면 폴더 화면으로 이동하기.
-        );
+        onPressed();
       },
       style: ElevatedButton.styleFrom(
           backgroundColor: threeColor,

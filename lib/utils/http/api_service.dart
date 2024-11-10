@@ -28,6 +28,7 @@ class ApiService {
   }
 
   Future<void> _init() async {
+    // dio = Dio(); // dio 초기화
     if (!_isInitialized) {
       dio = Dio();
     }

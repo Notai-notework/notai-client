@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notai/screens/community/community_screen.dart';
 import 'package:notai/screens/document/document_list_screen.dart';
 import 'package:notai/utils/color/color.dart';
@@ -29,7 +30,14 @@ class _MainScreen extends State<MainScreen> {
     super.initState();
     _navigatorKeyList =
         List.generate(_pages.length, (index) => GlobalKey<NavigatorState>());
+    get();
   }
+
+  Future<void> get() async {
+      final  a =await FlutterSecureStorage();
+      a.delete(key: "Authorization");
+  }
+
 
   @override
   Widget build(BuildContext context) {
