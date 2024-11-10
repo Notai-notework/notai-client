@@ -13,8 +13,9 @@ class RoundedNumberInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // margin: EdgeInsets.symmetric(vertical: 10),
-      margin: EdgeInsets.fromLTRB(100, 10, 10, 10),
+      // margin: EdgeInsets.fromLTRB(100, 10, 10, 10),
+      // 휴대폰 인증 버튼 표시시 알맞는 패딩값.
+      margin: EdgeInsets.fromLTRB(100, 10, 100, 10),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
       decoration: BoxDecoration(
         color: Colors.white,

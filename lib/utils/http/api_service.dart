@@ -28,7 +28,11 @@ class ApiService {
   }
 
   Future<void> _init() async {
-    dio = Dio(); // dio 초기화
+    // dio = Dio(); // dio 초기화
+
+    if (!_isInitialized) {
+      dio = Dio();
+    }
 
     // 로깅
     dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));

@@ -22,7 +22,9 @@ class NickNameCheckButton extends StatelessWidget {
       //   color: threeColor,
       // )
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: () {
+          onPressed();
+        },
         child: Text(
           "중복확인",
           style: TextStyle(

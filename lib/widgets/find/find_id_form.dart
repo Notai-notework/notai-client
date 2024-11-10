@@ -37,16 +37,6 @@ class _FindIdFormState extends State<FindIdForm> {
   final TextEditingController nickNameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
 
-  final LoginAuthService authService =
-      LoginAuthService(); // AuthService 인스턴스 생성
-
-  Future<void> login() async {
-    String? token = await authService.login(
-      emailController.text,
-      passwordController.text,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return AnimatedOpacity(

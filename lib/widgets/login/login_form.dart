@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:notai/utils/http/api_service.dart';
 import '../../utils/auth/login_authorization.dart';
 import '../../utils/color/color.dart';
+import '../../utils/http/api_service.dart';
 import '../find/findAllButton/find_elevatedbutton.dart';
 import '../global/everyLoginButton/rounded_input.dart';
 import '../global/everyLoginButton/rounded_password_input.dart';
@@ -32,13 +32,11 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final LoginAuthService authService =
-      LoginAuthService(); // AuthService 인스턴스 생성
-
   Future<void> login() async {
     final api = await ApiService();
-    Response response = await api
-        .post("/login", data: {"email": "a@test.com", "password": "1234"});
+    Response response = await api.post("/login", data: {
+      "email": emailController.text,
+      "password": passwordController.text});
 
     if (response.statusCode == 200) {
       String? access = response.headers['Authorization']![0];
@@ -49,7 +47,6 @@ class _LoginFormState extends State<LoginForm> {
       await storage.write(key: "refresh", value: refresh);
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return AnimatedOpacity(
@@ -62,8 +59,6 @@ class _LoginFormState extends State<LoginForm> {
           height: widget.defaultLoginSize,
           child: SingleChildScrollView(
             child: Column(
-              // crossAxisAlignment: CrossAxisAlignment.center,
-              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Align(
                   alignment: Alignment.topLeft,
@@ -113,9 +108,9 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                     SizedBox(width: 20),
                     LoginElevatedButton(
-                      onPressed: () {
-                        login();
-                      },
+                      onPressed:
+                        login,
+
                       buttonText: "로그인",
                     ),
                     SizedBox(width: 20),

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:notai/screens/document/document_list_screen.dart';
 import 'package:notai/screens/main_screen.dart';
 import 'package:notai/utils/color/color.dart';
-import 'screens/login/login_screen.dart';
 
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();

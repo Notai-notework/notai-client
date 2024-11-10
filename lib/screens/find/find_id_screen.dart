@@ -4,6 +4,10 @@ import '../../utils/color/color.dart';
 import '../../widgets/find/find_id_form.dart';
 
 class FindIdScreen extends StatefulWidget {
+
+  // final String email;
+  // const FindIdScreen({super.key, required this.email});
+
   @override
   _FindIdScreenState createState() => _FindIdScreenState();
 }
