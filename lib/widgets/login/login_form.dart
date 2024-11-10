@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../screens/main_screen.dart';
 import '../../utils/auth/login_authorization.dart';
 import '../../utils/color/color.dart';
 import '../../utils/http/api_service.dart';
@@ -45,6 +46,9 @@ class _LoginFormState extends State<LoginForm> {
       final storage = await FlutterSecureStorage();
       await storage.write(key: "Authorization", value: access);
       await storage.write(key: "refresh", value: refresh);
+
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => MainScreen()));
     }
   }
   @override
