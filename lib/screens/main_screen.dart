@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notai/screens/community/community_screen.dart';
 import 'package:notai/screens/document/document_list_screen.dart';
+import 'package:notai/screens/login/login_screen.dart';
 import 'package:notai/utils/color/color.dart';
 import 'package:notai/widgets/global/global_appbar.dart';
 
@@ -14,6 +15,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreen extends State<MainScreen> {
   int _selectedIndex = 0;
+  bool isLoggedIn = false;
 
   // 바텀 네비게이션 탭에 대한 페이지 리스트
   static final List<Widget> _pages = <Widget>[
@@ -30,14 +32,25 @@ class _MainScreen extends State<MainScreen> {
     super.initState();
     _navigatorKeyList =
         List.generate(_pages.length, (index) => GlobalKey<NavigatorState>());
-    // get();
+    // logout();
+    checkLoggedIn();
   }
 
-  Future<void> get() async {
-      final  a =await FlutterSecureStorage();
-      a.delete(key: "Authorization");
+  // 강제 로그아웃용
+  Future<void> logout() async {
+    final a = await FlutterSecureStorage();
+    a.delete(key: "Authorization");
   }
 
+  // 로그인 체크
+  Future<void> checkLoggedIn() async {
+    final storage = const FlutterSecureStorage();
+    String? token = await storage.read(key: "Authorization");
+
+    setState(() {
+      isLoggedIn = token != null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +60,12 @@ class _MainScreen extends State<MainScreen> {
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: (index) {
+            if (!isLoggedIn && index == 1) {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()));
+              return;
+            }
+
             setState(() {
               _selectedIndex = index;
             });
