@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:notai/repositories/document_repository.dart';
 import 'package:notai/utils/file/file_management.dart';
 import 'package:notai/utils/http/api_service.dart';
+import 'package:notai/utils/time/time_parser.dart';
 import 'package:path_provider/path_provider.dart';
 
 class CommunityScreen extends StatefulWidget {
@@ -13,91 +14,15 @@ class CommunityScreen extends StatefulWidget {
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
-  List<Map<String, dynamic>> _docs = [
-    {
-      'id': 1,
-      'title': "title1",
-      'user': {'id': 1, 'email': "a@test.com", 'nickname': "userAnick"},
-      'content': "content1",
-      "documentFileUrl":
-          "https://notai.s3.ap-northeast-2.amazonaws.com/document/07468a77-3880-4267-a80d-681ed9783785/%E1%84%89%E1%85%A9%E1%84%91%E1%85%B3%E1%84%90%E1%85%B3%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20%E1%84%80%E1%85%A9%E1%86%BC%E1%84%92%E1%85%A1%E1%86%A8%20%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%85%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB.pdf.pdf",
-      "previewImageUrl":
-          "https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8JTIzaW1hZ2V8ZW58MHx8MHx8fDA%3D",
-      'tagName': "CS",
-      'createdAt': "2024-10-22T10:49:29.27212",
-      "updatedAt": "2024-10-22T10:49:29.27212"
-    },
-    {
-      'id': 2,
-      'title': "title1",
-      'user': {'id': 1, 'email': "a@test.com", 'nickname': "userAnick"},
-      'content': "content1",
-      "documentFileUrl":
-          "https://notai.s3.ap-northeast-2.amazonaws.com/document/07468a77-3880-4267-a80d-681ed9783785/%E1%84%89%E1%85%A9%E1%84%91%E1%85%B3%E1%84%90%E1%85%B3%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20%E1%84%80%E1%85%A9%E1%86%BC%E1%84%92%E1%85%A1%E1%86%A8%20%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%85%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB.pdf.pdf",
-      "previewImageUrl":
-          "https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp",
-      'tagName': "CS",
-      'createdAt': "2024-10-22T10:49:29.27212",
-      "updatedAt": "2024-10-22T10:49:29.27212"
-    },
-    {
-      'id': 3,
-      'title': "title1",
-      'user': {'id': 1, 'email': "a@test.com", 'nickname': "userAnick"},
-      'content': "content1",
-      "documentFileUrl":
-          "https://notai.s3.ap-northeast-2.amazonaws.com/document/07468a77-3880-4267-a80d-681ed9783785/%E1%84%89%E1%85%A9%E1%84%91%E1%85%B3%E1%84%90%E1%85%B3%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20%E1%84%80%E1%85%A9%E1%86%BC%E1%84%92%E1%85%A1%E1%86%A8%20%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%85%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB.pdf.pdf",
-      "previewImageUrl":
-          "https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8JTIzaW1hZ2V8ZW58MHx8MHx8fDA%3D",
-      'tagName': "CS",
-      'createdAt': "2024-10-22T10:49:29.27212",
-      "updatedAt": "2024-10-22T10:49:29.27212"
-    },
-    {
-      'id': 4,
-      'title': "title1",
-      'user': {'id': 1, 'email': "a@test.com", 'nickname': "userAnick"},
-      'content': "content1",
-      "documentFileUrl":
-          "https://notai.s3.ap-northeast-2.amazonaws.com/document/07468a77-3880-4267-a80d-681ed9783785/%E1%84%89%E1%85%A9%E1%84%91%E1%85%B3%E1%84%90%E1%85%B3%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20%E1%84%80%E1%85%A9%E1%86%BC%E1%84%92%E1%85%A1%E1%86%A8%20%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%85%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB.pdf.pdf",
-      "previewImageUrl":
-          "https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp",
-      'tagName': "CS",
-      'createdAt': "2024-10-22T10:49:29.27212",
-      "updatedAt": "2024-10-22T10:49:29.27212"
-    },
-    {
-      'id': 5,
-      'title': "title1",
-      'user': {'id': 1, 'email': "a@test.com", 'nickname': "userAnick"},
-      'content': "content1",
-      "documentFileUrl":
-          "https://notai.s3.ap-northeast-2.amazonaws.com/document/07468a77-3880-4267-a80d-681ed9783785/%E1%84%89%E1%85%A9%E1%84%91%E1%85%B3%E1%84%90%E1%85%B3%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20%E1%84%80%E1%85%A9%E1%86%BC%E1%84%92%E1%85%A1%E1%86%A8%20%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%85%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB.pdf.pdf",
-      "previewImageUrl":
-          "https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8JTIzaW1hZ2V8ZW58MHx8MHx8fDA%3D",
-      'tagName': "CS",
-      'createdAt': "2024-10-22T10:49:29.27212",
-      "updatedAt": "2024-10-22T10:49:29.27212"
-    },
-    {
-      'id': 6,
-      'title': "title1",
-      'user': {'id': 1, 'email': "a@test.com", 'nickname': "userAnick"},
-      'content': "content1",
-      "documentFileUrl":
-          "https://notai.s3.ap-northeast-2.amazonaws.com/document/07468a77-3880-4267-a80d-681ed9783785/%E1%84%89%E1%85%A9%E1%84%91%E1%85%B3%E1%84%90%E1%85%B3%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20%E1%84%80%E1%85%A9%E1%86%BC%E1%84%92%E1%85%A1%E1%86%A8%20%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%85%E1%85%B5%E1%84%87%E1%85%A9%E1%86%AB.pdf.pdf",
-      "previewImageUrl":
-          "https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp",
-      'tagName': "CS",
-      'createdAt': "2024-10-22T10:49:29.27212",
-      "updatedAt": "2024-10-22T10:49:29.27212"
-    },
-  ];
+  List<dynamic> _docs = [];
 
   Future<void> fetchCommunityDocs() async {
     final as = await ApiService();
     Response response = await as.get("/api/documents");
-    _docs = response.data;
+
+    setState(() {
+      _docs = response.data;
+    });
   }
 
   Future<void> downloadDocument() async {
@@ -125,7 +50,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   @override
   void initState() {
     super.initState();
-    // fetchCommunityDocs();
+    fetchCommunityDocs();
   }
 
   @override
@@ -180,14 +105,19 @@ class _CommunityScreenState extends State<CommunityScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
+          Expanded(
+              child: SingleChildScrollView(
+            // scrollDirection: Axis.horizontal,
+            child: Wrap(
+              spacing: 40,
+              runSpacing: 60,
               children: [
-                for (var i = 0; i < 3; i++) const DocumentItem(),
+                if (!_docs.isEmpty)
+                  for (int i = 0; i < _docs.length; i++)
+                    DocumentItem(data: _docs[i])
               ],
             ),
-          ),
+          )),
         ],
       ),
     );
@@ -195,7 +125,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
 }
 
 class DocumentItem extends StatefulWidget {
-  const DocumentItem({super.key});
+  final Map<String, dynamic> data;
+
+  const DocumentItem({super.key, required this.data});
 
   @override
   _DocumentItemState createState() => _DocumentItemState();
@@ -205,6 +137,7 @@ class _DocumentItemState extends State<DocumentItem> {
   bool isLiked = false;
 
   void _showDocumentInfo(BuildContext context) {
+    final tp = TimeParser();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -226,18 +159,18 @@ class _DocumentItemState extends State<DocumentItem> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  '작성자: 작성자 이름',
+                Text(
+                  '작성자: ${widget.data['user']['nickname']}',
                   style: TextStyle(fontSize: 16),
                 ),
                 const SizedBox(height: 5),
-                const Text(
-                  '등록일: 2024-10-28',
+                Text(
+                  '등록일: ${tp.toFormat(widget.data['createdAt'])}',
                   style: TextStyle(fontSize: 16),
                 ),
                 const SizedBox(height: 5),
-                const Text(
-                  '태그: 문서 태그1, 문서 태그2, 문서 태그3',
+                Text(
+                  '태그: ${widget.data['tagName']}',
                   style: TextStyle(fontSize: 16),
                 ),
                 const SizedBox(height: 20),
@@ -286,13 +219,13 @@ class _DocumentItemState extends State<DocumentItem> {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                child: Image.network(
-                    "https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp"),
-              ),
+              const CircleAvatar(child: Icon(Icons.person)
+                  // Image.network(
+                  //     "https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp"),
+                  ),
               const SizedBox(width: 10),
-              const Text(
-                '작성자 이름',
+              Text(
+                widget.data['user']['nickname'],
                 style: TextStyle(fontSize: 16),
               ),
             ],
@@ -303,8 +236,9 @@ class _DocumentItemState extends State<DocumentItem> {
               Container(
                 width: double.infinity,
                 height: 200,
-                child: Image.network(
-                    "https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp"),
+                child: Image.network(widget.data['previewImageUrl']
+                    // "https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp"
+                    ),
                 // decoration: BoxDecoration(
                 //   borderRadius: BorderRadius.circular(20.0),
                 //   image: DecorationImage(
@@ -314,32 +248,36 @@ class _DocumentItemState extends State<DocumentItem> {
                 //   ),
                 // ),
               ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isLiked = !isLiked;
-                    });
-                  },
-                  icon: Icon(
-                    isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: isLiked ? Colors.red : Colors.black,
-                    size: 30,
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   top: 10,
+              //   right: 10,
+              //   child: IconButton(
+              //     onPressed: () {
+              //       setState(() {
+              //         isLiked = !isLiked;
+              //       });
+              //     },
+              //     icon: Icon(
+              //       isLiked ? Icons.favorite : Icons.favorite_border,
+              //       color: isLiked ? Colors.red : Colors.black,
+              //       size: 30,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           const SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                '문서 제목',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+              Expanded(
+                  child: Text(
+                widget.data['title'],
+                overflow: TextOverflow.ellipsis,
+                // maxLines: 1,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              )),
               PopupMenuButton<String>(
                 onSelected: (String value) {
                   if (value == 'viewInfo') {
@@ -368,8 +306,8 @@ class _DocumentItemState extends State<DocumentItem> {
             ],
           ),
           const SizedBox(height: 10),
-          const Text(
-            '문서 태그1, 문서 태그2, 문서 태그3',
+          Text(
+            widget.data['tagName'],
             style: TextStyle(color: Colors.grey),
           ),
         ],
