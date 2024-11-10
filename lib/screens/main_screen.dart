@@ -30,7 +30,7 @@ class _MainScreen extends State<MainScreen> {
     super.initState();
     _navigatorKeyList =
         List.generate(_pages.length, (index) => GlobalKey<NavigatorState>());
-    get();
+    // get();
   }
 
   Future<void> get() async {
