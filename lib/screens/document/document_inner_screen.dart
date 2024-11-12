@@ -75,7 +75,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
 
     _images = images;
     notifier = List.generate(_images.length,
-        (index) => CustomNotifier([1, 3, 5], ScribblePointerMode.all));
+        (index) => CustomNotifier([1, 3, 5], ScribblePointerMode.mouseOnly));
 
     _controller.addListener(() {
       setState(() {
@@ -440,18 +440,20 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
                                         itemCount: _images.length,
                                         itemBuilder: (context, index) {
                                           print(_imagesSizes[index]);
-                                          return Center(
-                                              child: InteractiveViewer(
+                                          return SingleChildScrollView(
+                                              child: Center(
+                                                  child: InteractiveViewer(
                                             // boundaryMargin:
-                                            //     const EdgeInsets.all(20.0),
+                                            //     const EdgeInsets.all(20.0), f
                                             minScale: 1.0,
                                             maxScale: 4.0,
                                             child: RepaintBoundary(
                                                 key: _globalKeys[index],
                                                 child: Container(
-                                                  // width: 2480,
-                                                  // height: 3508,
+                                                  // width: 400.0,
+                                                  // height: 300.0,
                                                   width: _imagesSizes[index][0],
+                                                  // width: 2000,
                                                   height: _imagesSizes[index]
                                                       [1],
                                                   decoration: BoxDecoration(
@@ -459,13 +461,12 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
                                                       image: DecorationImage(
                                                           image: MemoryImage(
                                                               _images[index]),
-                                                          fit: BoxFit
-                                                              .fitHeight)),
+                                                          fit: BoxFit.contain)),
                                                   child: Scribble(
                                                       notifier:
                                                           notifier[index]),
                                                 )),
-                                          ));
+                                          )));
                                         }))),
                     SizedBox(
                         width: _isChatVisible ? 800 : double.infinity,
