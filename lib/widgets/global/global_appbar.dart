@@ -55,12 +55,16 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
       //       },
       //     ),
       title: widget.title ??
-          Center(
-              child: Text(
-            'NOTAI',
-            style: const TextStyle(
-                fontSize: 40, fontWeight: FontWeight.w900, color: Colors.white),
-          )),
+          const Padding(
+              padding: EdgeInsets.fromLTRB(200, 0, 0, 0),
+              child: Center(
+                  child: Text(
+                'NOTAI',
+                style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white),
+              ))),
       actions: widget.actions ??
           [
             if (isLoggedIn)
