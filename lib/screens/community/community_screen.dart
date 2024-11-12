@@ -57,71 +57,76 @@ class _CommunityScreenState extends State<CommunityScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+      padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                child: const Text('최신순'),
-              ),
-              const SizedBox(width: 20),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                child: const Text('인기순'),
-              ),
-              const SizedBox(width: 20),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                child: const Text('스크랩'),
-              ),
-              const Spacer(),
-              const SizedBox(
-                width: 300,
-                child: SearchBar(
-                  trailing: [Icon(Icons.search)],
-                  backgroundColor:
-                      WidgetStatePropertyAll<Color>(Color(0xFFF5EFFF)),
-                  hintText: "검색어를 입력해주세요.",
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
+          // Row(
+          //   mainAxisSize: MainAxisSize.max,
+          //   children: [
+          //     ElevatedButton(
+          //       onPressed: () {},
+          //       style: ElevatedButton.styleFrom(
+          //         shape: RoundedRectangleBorder(
+          //           borderRadius: BorderRadius.circular(15),
+          //         ),
+          //       ),
+          //       child: const Text('최신순'),
+          //     ),
+          //     const SizedBox(width: 20),
+          //     ElevatedButton(
+          //       onPressed: () {},
+          //       style: ElevatedButton.styleFrom(
+          //         shape: RoundedRectangleBorder(
+          //           borderRadius: BorderRadius.circular(15),
+          //         ),
+          //       ),
+          //       child: const Text('인기순'),
+          //     ),
+          //     const SizedBox(width: 20),
+          //     ElevatedButton(
+          //       onPressed: () {},
+          //       style: ElevatedButton.styleFrom(
+          //         shape: RoundedRectangleBorder(
+          //           borderRadius: BorderRadius.circular(15),
+          //         ),
+          //       ),
+          //       child: const Text('스크랩'),
+          //     ),
+          //     const Spacer(),
+          //     const SizedBox(
+          //       width: 300,
+          //       child: SearchBar(
+          //         trailing: [Icon(Icons.search)],
+          //         backgroundColor:
+          //             WidgetStatePropertyAll<Color>(Color(0xFFF5EFFF)),
+          //         hintText: "검색어를 입력해주세요.",
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // const SizedBox(height: 20),
           Expanded(
               child: SingleChildScrollView(
-            // scrollDirection: Axis.horizontal,
-            child: Wrap(
-              spacing: 40,
-              runSpacing: 60,
-              children: [
-                if (!_docs.isEmpty)
-                  for (int i = 0; i < _docs.length; i++)
-                    DocumentItem(
-                      data: _docs[i],
-                      index: i,
-                    )
-              ],
-            ),
-          )),
+                  // scrollDirection: Axis.horizontal,
+                  child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Wrap(
+                spacing: 40,
+                runSpacing: 60,
+                children: [
+                  if (!_docs.isEmpty)
+                    for (int i = 0; i < _docs.length; i++)
+                      DocumentItem(
+                        data: _docs[i],
+                        index: i,
+                      )
+                ],
+              ),
+              const SizedBox(height: 20),
+            ],
+          )))
         ],
       ),
     );
