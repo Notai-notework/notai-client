@@ -30,14 +30,16 @@ class FileManagement {
         await Dio().download(downloadUrl, "$basePath/${data['title']}.pdf");
 
     if (response.statusCode == 200) {
-      await saveDocument(id, "$basePath/${data['title']}.pdf", data['title']);
+      await saveDocument(
+          id, "$basePath/${data['title']}.pdf", data['title'], true);
     }
   }
 
   // 문서를 로컬에 저장
   // id: DB로부터 부여받은 id
   // file: 문서 파일
-  Future<void> saveDocument(int id, String filePath, String fileName) async {
+  Future<void> saveDocument(
+      int id, String filePath, String fileName, bool isDown) async {
     Directory directory = await getApplicationDocumentsDirectory();
     print(directory.path);
 
@@ -69,7 +71,7 @@ class FileManagement {
         // you can pass a custom size here to crop the image
         height: size.height,
         // you can pass a custom size here to crop the image
-        scale: 1,
+        scale: isDown ? 1 : 1,
         // increase the scale for better quality (e.g. for zooming)
         background: Colors.white,
       );

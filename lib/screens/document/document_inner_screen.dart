@@ -7,6 +7,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 // import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:notai/screens/login/login_screen.dart';
 import 'package:notai/utils/color/color.dart';
@@ -16,8 +17,10 @@ import 'package:notai/utils/time/time_parser.dart';
 import 'package:notai/widgets/document/custom_notifier.dart';
 import 'package:notai/widgets/global/global_appbar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf_render/pdf_render.dart';
 import 'package:scribble/scribble.dart';
 import 'package:value_notifier_tools/value_notifier_tools.dart';
+import 'package:image/image.dart' as img;
 
 import '../../utils/jwt/jwt.dart';
 
@@ -296,7 +299,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
     _fetchImages(widget.document['id']);
     _pageController = PageController();
     _checkUser();
-    delete();
+    // delete();
   }
 
   Future<void> delete() async {
@@ -340,185 +343,197 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
 
     String titleName = widget.document['name'];
 
-    return Scaffold(
-        // key: UniqueKey(),
-        appBar: GlobalAppbar(
-          title: Center(
-              child: Text(
-            titleName,
-            style: TextStyle(
-                fontSize: 40, fontWeight: FontWeight.w900, color: Colors.white),
-          )),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              // 뒤로가기 버튼 눌렀을 때 이벤트 처리
-              _save(widget.document['id'], widget.document['name']);
-            },
-          ),
-          actions: [
-            Container(
-                child: IconButton(
-                    onPressed: () {
-                      toggleChat();
-                    },
-                    color: _isChatVisible ? Colors.black : Colors.white,
-                    icon: Icon(Icons.live_help))),
-            Container(
-                child: TextButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()));
-              },
-              child: TextButton(
-                  onPressed: () async {
-                    // print('dd');
-                    // FlutterSecureStorage storage = await FlutterSecureStorage();
-                    // var response = await ApiService().post('/login',
-                    //     data: {'email': 'a@test.com', 'password': '1234'});
-                    // // await storage.delete(key: 'Authorization');
-                    // await storage.write(
-                    //     key: 'Authorization',
-                    //     value: response.headers['Authorization']![0]);
-                    // await storage.write(
-                    //     key: 'refresh',
-                    //     value: response.headers['refresh']![0]);
-                    // String? auh = await storage.read(key: 'Authorization');
-                    // print('auh: $auh');
+    return WillPopScope(
+        onWillPop: () async {
+          _save(widget.document['id'], widget.document['name']);
+          return false;
+        },
+        child: Scaffold(
+            // key: UniqueKey(),
+            appBar: GlobalAppbar(
+              title: Center(
+                  child: Text(
+                titleName,
+                style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white),
+              )),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  print('dd');
+                  // 뒤로가기 버튼 눌렀을 때 이벤트 처리
+                  // _save(widget.document['id'], widget.document['name']);
+                },
+              ),
+              actions: [
+                Container(
+                    child: IconButton(
+                        onPressed: () {
+                          toggleChat();
+                        },
+                        color: _isChatVisible ? Colors.black : Colors.white,
+                        icon: Icon(Icons.live_help))),
+                Container(
+                    child: TextButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()));
                   },
-                  child: Text(isLoggedIn ? payload['name'] : '로그인',
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600))),
-            ))
-          ],
-        ),
-        body: Row(children: [
-          Flexible(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                Expanded(
-                    child: SizedBox(
-                        width: containerWidth,
-                        height: double.infinity,
-                        child: isLoading
-                            ? const Center(
-                                child: Column(children: [
-                                const SizedBox(height: 300),
-                                CircularProgressIndicator(),
-                                const SizedBox(height: 50),
-                                Text('문서를 불러오고 있습니다..')
-                              ]))
-                            : isSaving
+                  child: TextButton(
+                      onPressed: () async {
+                        // print('dd');
+                        // FlutterSecureStorage storage = await FlutterSecureStorage();
+                        // var response = await ApiService().post('/login',
+                        //     data: {'email': 'a@test.com', 'password': '1234'});
+                        // // await storage.delete(key: 'Authorization');
+                        // await storage.write(
+                        //     key: 'Authorization',
+                        //     value: response.headers['Authorization']![0]);
+                        // await storage.write(
+                        //     key: 'refresh',
+                        //     value: response.headers['refresh']![0]);
+                        // String? auh = await storage.read(key: 'Authorization');
+                        // print('auh: $auh');
+                      },
+                      child: Text(isLoggedIn ? payload['name'] : '로그인',
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600))),
+                ))
+              ],
+            ),
+            body: Row(children: [
+              Flexible(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                    Expanded(
+                        child: SizedBox(
+                            width: containerWidth,
+                            height: double.infinity,
+                            child: isLoading
                                 ? const Center(
                                     child: Column(children: [
                                     const SizedBox(height: 300),
                                     CircularProgressIndicator(),
                                     const SizedBox(height: 50),
-                                    Text('문서를 저장 중 입니다..')
+                                    Text('문서를 불러오고 있습니다..')
                                   ]))
-                                : PageView.builder(
-                                    controller: _pageController,
-                                    onPageChanged: (index) {
-                                      _currentImageIndex = index;
-                                      // notifier[index].clear();
-                                    },
-                                    itemCount: _images.length,
-                                    itemBuilder: (context, index) {
-                                      print(_imagesSizes[index]);
-                                      return Center(
-                                          child: InteractiveViewer(
-                                        // boundaryMargin:
-                                        //     const EdgeInsets.all(20.0),
-                                        minScale: 1.0,
-                                        maxScale: 4.0,
-                                        child: RepaintBoundary(
-                                            key: _globalKeys[index],
-                                            child: Container(
-                                              // width: 2480,
-                                              // height: 3508,
-                                              width: _imagesSizes[index][0],
-                                              height: _imagesSizes[index][1],
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  image: DecorationImage(
-                                                      image: MemoryImage(
-                                                          _images[index]),
-                                                      fit: BoxFit.fitHeight)),
-                                              child: Scribble(
-                                                  notifier: notifier[index]),
-                                            )),
-                                      ));
-                                    }))),
-                SizedBox(
-                    width: _isChatVisible ? 800 : double.infinity,
-                    height: 100,
-                    child: Container(
-                        margin: EdgeInsets.fromLTRB(
-                            _isChatVisible ? 150 : 350, 0, 0, 0),
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            _buildColorToolbar(context),
-                            const VerticalDivider(width: 32),
-                            _buildStrokeToolbar(context),
-                            const Expanded(child: SizedBox()),
-                            // _buildPointerModeSwitcher(context),
-                            // const Expanded(child: SizedBox()),
-                          ],
-                        )))
-              ])),
-          _isChatVisible
-              ? isMessagesLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : Container(
-                      width: 400,
-                      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                      child: Column(
-                        children: [
-                          _messages.isEmpty
-                              ? Center(child: Text('채팅을 시작해보세요!'))
-                              : Expanded(
-                                  child: ListView.builder(
-                                    controller: _scrollController,
-                                    itemCount: _messages.length,
-                                    itemBuilder: (context, index) {
-                                      return _buildMessage(_messages[index]);
-                                    },
-                                    physics: BouncingScrollPhysics(),
-                                  ),
-                                ),
-                          Container(
-                            padding: EdgeInsets.all(8.0),
+                                : isSaving
+                                    ? const Center(
+                                        child: Column(children: [
+                                        const SizedBox(height: 300),
+                                        CircularProgressIndicator(),
+                                        const SizedBox(height: 50),
+                                        Text('문서를 저장 중 입니다..')
+                                      ]))
+                                    : PageView.builder(
+                                        controller: _pageController,
+                                        onPageChanged: (index) {
+                                          _currentImageIndex = index;
+                                          // notifier[index].clear();
+                                        },
+                                        itemCount: _images.length,
+                                        itemBuilder: (context, index) {
+                                          print(_imagesSizes[index]);
+                                          return Center(
+                                              child: InteractiveViewer(
+                                            // boundaryMargin:
+                                            //     const EdgeInsets.all(20.0),
+                                            minScale: 1.0,
+                                            maxScale: 4.0,
+                                            child: RepaintBoundary(
+                                                key: _globalKeys[index],
+                                                child: Container(
+                                                  // width: 2480,
+                                                  // height: 3508,
+                                                  width: _imagesSizes[index][0],
+                                                  height: _imagesSizes[index]
+                                                      [1],
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      image: DecorationImage(
+                                                          image: MemoryImage(
+                                                              _images[index]),
+                                                          fit: BoxFit
+                                                              .fitHeight)),
+                                                  child: Scribble(
+                                                      notifier:
+                                                          notifier[index]),
+                                                )),
+                                          ));
+                                        }))),
+                    SizedBox(
+                        width: _isChatVisible ? 800 : double.infinity,
+                        height: 100,
+                        child: Container(
+                            margin: EdgeInsets.fromLTRB(
+                                _isChatVisible ? 150 : 350, 0, 0, 0),
+                            padding: const EdgeInsets.all(16),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Expanded(
-                                  child: TextField(
-                                    // focusNode: _focusNode,
-                                    controller: _chatInputController,
-                                    decoration: const InputDecoration(
-                                      hintText: '메시지를 입력하세요...',
-                                      border: OutlineInputBorder(),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 8),
-                                ElevatedButton(
-                                  onPressed: _sendMessage,
-                                  child: Text('전송'),
-                                ),
+                                _buildColorToolbar(context),
+                                const VerticalDivider(width: 32),
+                                _buildStrokeToolbar(context),
+                                const Expanded(child: SizedBox()),
+                                // _buildPointerModeSwitcher(context),
+                                // const Expanded(child: SizedBox()),
                               ],
-                            ),
-                          ),
-                        ],
-                      ))
-              : Container(width: 0)
-        ]));
+                            )))
+                  ])),
+              _isChatVisible
+                  ? isMessagesLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : Container(
+                          width: 400,
+                          padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                          child: Column(
+                            children: [
+                              _messages.isEmpty
+                                  ? Center(child: Text('채팅을 시작해보세요!'))
+                                  : Expanded(
+                                      child: ListView.builder(
+                                        controller: _scrollController,
+                                        itemCount: _messages.length,
+                                        itemBuilder: (context, index) {
+                                          return _buildMessage(
+                                              _messages[index]);
+                                        },
+                                        physics: BouncingScrollPhysics(),
+                                      ),
+                                    ),
+                              Container(
+                                padding: EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextField(
+                                        // focusNode: _focusNode,
+                                        controller: _chatInputController,
+                                        decoration: const InputDecoration(
+                                          hintText: '메시지를 입력하세요...',
+                                          border: OutlineInputBorder(),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    ElevatedButton(
+                                      onPressed: _sendMessage,
+                                      child: Text('전송'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ))
+                  : Container(width: 0)
+            ])));
     // );
   }
 
@@ -573,14 +588,16 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
         RenderRepaintBoundary boundary = _globalKeys[i]
             .currentContext!
             .findRenderObject() as RenderRepaintBoundary;
-        ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+        ui.Image image = await boundary.toImage(pixelRatio: 1.0);
+        final a = image.width;
+        final b = image.height;
         ByteData? byteData =
             await image.toByteData(format: ui.ImageByteFormat.png);
         Uint8List pngBytes = byteData!.buffer.asUint8List();
 
         // 지정한 크기로 조정 (size.width, size.height에 맞게)
         // pngBytes = await resizeImage(
-        //     pngBytes, ui.Size(_imagesSizes[i][0], _imagesSizes[i][1]));
+        //     pngBytes, _imagesSizes[i][0], _imagesSizes[i][1]);
 
         // 파일 시스템 경로 찾기
         final directory = await getApplicationDocumentsDirectory();
@@ -612,32 +629,32 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
   }
 
   // 이미지 크기 조정 함수
-  Future<Uint8List> resizeImage(Uint8List pngBytes, Size size) async {
-    // 이미지 로드
-    ui.Codec codec = await ui.instantiateImageCodec(pngBytes);
-    ui.FrameInfo frameInfo = await codec.getNextFrame();
-    ui.Image originalImage = frameInfo.image;
+  Future<Uint8List> resizeImage(
+      Uint8List data, double targetWidth, double targetHeight) async {
+    final originalImage = img.decodeImage(data);
+    if (originalImage == null) return data;
 
-    // 새 크기로 조정
-    ui.PictureRecorder recorder = ui.PictureRecorder();
-    ui.Canvas canvas = ui.Canvas(recorder);
+    // 원본 이미지의 가로 세로 비율 계산
+    double aspectRatio = originalImage.width / originalImage.height;
 
-    // 새 크기에 맞게 그리기
-    canvas.drawImage(originalImage, ui.Offset(0, 0), ui.Paint());
+    // 목표 크기와 비율을 고려하여 리사이즈
+    double newWidth = targetWidth;
+    double newHeight = (newWidth / aspectRatio);
 
-    // 이미지 생성
-    ui.Image newImage = await recorder
-        .endRecording()
-        .toImage(size.width.toInt(), size.height.toInt());
+    // 높이가 목표 높이를 넘으면, 높이에 맞게 가로 크기 조정
+    if (newHeight > targetHeight) {
+      newHeight = targetHeight;
+      newWidth = (newHeight * aspectRatio);
+    }
 
-    // 새로운 이미지 바이트 데이터로 변환
-    ByteData? newByteData =
-        await newImage.toByteData(format: ui.ImageByteFormat.png);
-    return newByteData!.buffer.asUint8List();
+    // 비율을 유지하며 리사이즈
+    final resizedImage = img.copyResize(originalImage,
+        width: newWidth.toInt(), height: newHeight.toInt());
+    return Uint8List.fromList(img.encodePng(resizedImage));
   }
 
   void _showImage(BuildContext context, Uint8List imageFile) async {
-    final image = notifier[_currentImageIndex].renderImage();
+    final image = notifier[_currentImageIndex].renderImage(pixelRatio: 2.0);
     Directory directory = await getApplicationDocumentsDirectory();
     print(directory.path);
     return;
@@ -732,8 +749,8 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
           customBorder: const CircleBorder(),
           child: AnimatedContainer(
             duration: kThemeAnimationDuration,
-            width: 20,
-            height: 20,
+            width: strokeWidth <= 1 ? 5 : strokeWidth * 3,
+            height: strokeWidth <= 1 ? 5 : strokeWidth * 3,
             decoration: BoxDecoration(
                 color: state.map(
                   drawing: (s) => Color(s.selectedColor),

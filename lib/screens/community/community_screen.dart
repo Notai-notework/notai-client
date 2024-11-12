@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:notai/repositories/document_repository.dart';
 import 'package:notai/utils/file/file_management.dart';
@@ -114,7 +115,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
               children: [
                 if (!_docs.isEmpty)
                   for (int i = 0; i < _docs.length; i++)
-                    DocumentItem(data: _docs[i])
+                    DocumentItem(
+                      data: _docs[i],
+                      index: i,
+                    )
               ],
             ),
           )),
@@ -126,8 +130,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
 class DocumentItem extends StatefulWidget {
   final Map<String, dynamic> data;
+  final int index;
 
-  const DocumentItem({super.key, required this.data});
+  const DocumentItem({super.key, required this.data, required this.index});
 
   @override
   _DocumentItemState createState() => _DocumentItemState();
@@ -135,6 +140,7 @@ class DocumentItem extends StatefulWidget {
 
 class _DocumentItemState extends State<DocumentItem> {
   bool isLiked = false;
+  bool isDownloading = false;
 
   void _showDocumentInfo(BuildContext context) {
     final tp = TimeParser();
@@ -293,9 +299,59 @@ class _DocumentItemState extends State<DocumentItem> {
                     value: 'viewInfo',
                     child: Text('문서 정보 보기'),
                   ),
-                  const PopupMenuItem<String>(
+                  PopupMenuItem<String>(
+                    onTap: () async {
+                      setState(() {
+                        isDownloading = true;
+                      });
+
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => CupertinoAlertDialog(
+                          title: Text('다운로드 중..'),
+                          content: Center(
+                              child: Column(
+                            children: [
+                              SizedBox(height: 30),
+                              CircularProgressIndicator()
+                            ],
+                          )),
+                          actions: [
+                            if (!isDownloading)
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("닫기"))
+                          ],
+                        ),
+                      );
+
+                      final fm = await FileManagement();
+                      fm.saveDownloadedDocument(
+                          widget.data['documentFileUrl'], widget.data);
+
+                      Navigator.pop(context);
+
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => CupertinoAlertDialog(
+                          title: Text('다운로드 완료'),
+                          content: Container(),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text("닫기"))
+                          ],
+                        ),
+                      );
+                    },
                     value: 'block',
-                    child: Text('차단하기'),
+                    child: const Text('다운로드'),
                   ),
                 ],
                 icon: const Icon(Icons.more_vert, color: Colors.purple),

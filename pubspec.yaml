@@ -26,6 +26,7 @@ dependencies:
   dio: ^5.7.0
   dart_jsonwebtoken: ^2.14.1
   pdf: ^3.11.1
+  pdf_render: ^1.4.12
 
 dev_dependencies:
   flutter_test:

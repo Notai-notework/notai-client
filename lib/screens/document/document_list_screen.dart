@@ -115,7 +115,7 @@ class _DocumentListState extends State<DocumentListScreen> {
     final dr = DocumentRepository();
     int id = await dr.insert(name);
     final fm = FileManagement();
-    await fm.saveDocument(id, path!, name);
+    await fm.saveDocument(id, path!, name, false);
 
     setState(() {
       dr.getDocuments().then((e) {
