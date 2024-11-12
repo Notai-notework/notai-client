@@ -74,7 +74,7 @@ class _MainScreen extends State<MainScreen> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.file_copy_rounded), label: '문서'),
             BottomNavigationBarItem(icon: Icon(Icons.chat), label: '커뮤니티'),
-            BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: '즐겨찾기'),
+            // BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: '즐겨찾기'),
           ],
           selectedItemColor: titleColor,
         ));
