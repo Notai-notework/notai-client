@@ -113,11 +113,11 @@ class _LoginFormState extends State<LoginForm> {
 
                       buttonText: "로그인",
                     ),
-                    SizedBox(width: 20),
-                    FindElevatedButton(
-                      onPressed: () {},
-                      buttonText: "아이디/비밀번호 찾기",
-                    ),
+                    // SizedBox(width: 20),
+                    // FindElevatedButton(
+                    //   onPressed: () {},
+                    //   buttonText: "아이디/비밀번호 찾기",
+                    // ),
                   ],
                 ),
               ],

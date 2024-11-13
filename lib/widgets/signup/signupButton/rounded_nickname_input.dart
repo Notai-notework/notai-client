@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class RoundedNicknameInput extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
+  final bool islokced;
 
   const RoundedNicknameInput({
     super.key,
     required this.hint,
     required this.controller,
+    this.islokced = false,
   });
 
   @override
@@ -21,6 +23,7 @@ class RoundedNicknameInput extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
       ),
       child: TextField(
+        enabled: !islokced,
         controller: controller,
         decoration: InputDecoration(
           icon: Icon(Icons.abc_rounded, color: Colors.grey),
