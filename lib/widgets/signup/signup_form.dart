@@ -104,10 +104,12 @@ class _SignUpFormState extends State<SignUpForm> {
     if (!isEmailLocked) {
       print("이메일 중복은 필수!");
       await EmailLockedDialog(context);
+      return;
     }
     if (!isNickNameLocked) {
       print("닉네임 중복은 필수!");
       await NicknameLockedDialog(context);
+      return;
     }
 
     final api = await ApiService();
