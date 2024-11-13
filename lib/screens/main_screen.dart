@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notai/screens/community/community_screen.dart';
 import 'package:notai/screens/document/document_list_screen.dart';
 import 'package:notai/screens/login/login_screen.dart';
+import 'package:notai/utils/auth/auth_management.dart';
 import 'package:notai/utils/color/color.dart';
 import 'package:notai/widgets/global/global_appbar.dart';
+import 'package:path_provider/path_provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -33,23 +37,31 @@ class _MainScreen extends State<MainScreen> {
     _navigatorKeyList =
         List.generate(_pages.length, (index) => GlobalKey<NavigatorState>());
     // logout();
+    // initDocument();
     checkLoggedIn();
+  }
+
+  // 도큐먼트 초기화용
+  Future<void> initDocument() async {
+    Directory directory = await getApplicationDocumentsDirectory();
+    var files = directory.listSync();
+    try {
+      for (var file in files) {
+        await file.delete(recursive: true);
+      }
+    } catch (e) {}
   }
 
   // 강제 로그아웃용
   Future<void> logout() async {
     final a = await FlutterSecureStorage();
-    a.delete(key: "Authorization");
+    await a.delete(key: "Authorization");
+    a.write(key: "isLoggedIn", value: "false");
   }
 
   // 로그인 체크
   Future<void> checkLoggedIn() async {
-    final storage = const FlutterSecureStorage();
-    String? token = await storage.read(key: "Authorization");
-
-    setState(() {
-      isLoggedIn = token != null;
-    });
+    isLoggedIn = await AuthManagement().isLoggedIn();
   }
 
   @override

@@ -181,12 +181,15 @@ class _DocumentListState extends State<DocumentListScreen> {
 
   Future<void> _checkUser() async {
     var storage = await FlutterSecureStorage();
-    String? access = await storage.read(key: 'Authorization');
-    isLoggedIn = access != null;
+    final check = await storage.read(key: "isLoggedIn");
 
-    if (access != null) {
+    isLoggedIn = check == "true";
+
+    String? access = await storage.read(key: 'Authorization');
+
+    if (isLoggedIn) {
       setState(() {
-        payload = Jwt().decodeJWT(access)!; // 데이터 업데이트
+        payload = Jwt().decodeJWT(access!)!; // 데이터 업데이트
       });
     }
   }
@@ -197,10 +200,10 @@ class _DocumentListState extends State<DocumentListScreen> {
         padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
         child: SingleChildScrollView(
             child: Column(
-              children: [
-                SizedBox(height: 30),
-                Wrap(spacing: 40, runSpacing: 60, children: [
-                          Container(
+          children: [
+            SizedBox(height: 30),
+            Wrap(spacing: 40, runSpacing: 60, children: [
+              Container(
                   decoration: BoxDecoration(
                     color: twoColor,
                     border: Border.all(
@@ -243,8 +246,8 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                 vertical: 12, horizontal: 24)),
                                         shape: WidgetStateProperty.all(
                                             RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8), // 둥근 모서리
+                                          borderRadius: BorderRadius.circular(
+                                              8), // 둥근 모서리
                                         )),
                                       ),
                                       onPressed: () {
@@ -277,7 +280,7 @@ class _DocumentListState extends State<DocumentListScreen> {
                           const Text('문서 불러오기..')
                         ],
                       ))),
-                          if (!_documents!.isEmpty)
+              if (!_documents!.isEmpty)
                 ...?_documents?.asMap().entries.map((entry) {
                   int index = entry.key;
                   var element = entry.value;
@@ -329,9 +332,11 @@ class _DocumentListState extends State<DocumentListScreen> {
                                 TextButton(
                                     onPressed: () => showDialog<String>(
                                           context: context,
-                                          builder: (BuildContext context) => Dialog(
+                                          builder: (BuildContext context) =>
+                                              Dialog(
                                             child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 mainAxisAlignment:
@@ -339,168 +344,141 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                 children: <Widget>[
                                                   const SizedBox(height: 15),
                                                   Text(element['name'],
-                                                      style:
-                                                          TextStyle(fontSize: 20)),
+                                                      style: TextStyle(
+                                                          fontSize: 20)),
                                                   const SizedBox(height: 15),
                                                   TextButton(
-                                                      onPressed: () => showDialog(
-                                                          context: context,
-                                                          builder:
-                                                              (BuildContext
-                                                                      context) =>
-                                                                  Dialog(
-                                                                    child: Padding(
-                                                                      padding:
-                                                                          const EdgeInsets
+                                                      onPressed: () =>
+                                                          showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                          context) =>
+                                                                      Dialog(
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
                                                                               .all(
                                                                               8.0),
-                                                                      child: Column(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize
-                                                                                .min,
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment
-                                                                                .center,
-                                                                        children: [
-                                                                          const Text(
-                                                                              '문서 이름 수정'),
-                                                                          const SizedBox(
-                                                                              height:
-                                                                                  15),
-                                                                          Container(
-                                                                              width:
-                                                                                  400,
-                                                                              padding: const EdgeInsets
-                                                                                  .all(
-                                                                                  10.0),
-                                                                              child:
-                                                                                  TextField(
-                                                                                controller:
-                                                                                    _documentNameInputControllers[index],
-                                                                                decoration:
-                                                                                    const InputDecoration(
-                                                                                  border: OutlineInputBorder(),
-                                                                                ),
-                                                                              )),
-                                                                          const SizedBox(
-                                                                              height:
-                                                                                  15),
-                                                                          Container(
-                                                                              width:
-                                                                                  300,
-                                                                              child:
-                                                                                  Row(
-                                                                                mainAxisAlignment:
-                                                                                    MainAxisAlignment.spaceEvenly,
-                                                                                children: [
-                                                                                  TextButton(
-                                                                                    style: ButtonStyle(
-                                                                                      backgroundColor: WidgetStateProperty.all(twoColor),
-                                                                                      // 배경 색
-                                                                                      padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
-                                                                                      shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                                                                                        borderRadius: BorderRadius.circular(8), // 둥근 모서리
-                                                                                      )),
+                                                                          child:
+                                                                              Column(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.min,
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.center,
+                                                                            children: [
+                                                                              const Text('문서 이름 수정'),
+                                                                              const SizedBox(height: 15),
+                                                                              Container(
+                                                                                  width: 400,
+                                                                                  padding: const EdgeInsets.all(10.0),
+                                                                                  child: TextField(
+                                                                                    controller: _documentNameInputControllers[index],
+                                                                                    decoration: const InputDecoration(
+                                                                                      border: OutlineInputBorder(),
                                                                                     ),
-                                                                                    onPressed: () {
-                                                                                      _modifyDocumentName(element['id'], _documentNameInputControllers[index].text, index);
-                                                                                      Navigator.of(context).popUntil((route) => route.isFirst);
-                                                                                    },
-                                                                                    child: const Text('저장'),
-                                                                                  ),
-                                                                                  TextButton(
-                                                                                    onPressed: () {
-                                                                                      Navigator.pop(context);
-                                                                                    },
-                                                                                    child: const Text('닫기'),
-                                                                                  )
-                                                                                ],
-                                                                              ))
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  )),
-                                                      child:
-                                                          const Text('문서 이름 수정')),
+                                                                                  )),
+                                                                              const SizedBox(height: 15),
+                                                                              Container(
+                                                                                  width: 300,
+                                                                                  child: Row(
+                                                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                                    children: [
+                                                                                      TextButton(
+                                                                                        style: ButtonStyle(
+                                                                                          backgroundColor: WidgetStateProperty.all(twoColor),
+                                                                                          // 배경 색
+                                                                                          padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
+                                                                                          shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                                                                                            borderRadius: BorderRadius.circular(8), // 둥근 모서리
+                                                                                          )),
+                                                                                        ),
+                                                                                        onPressed: () {
+                                                                                          _modifyDocumentName(element['id'], _documentNameInputControllers[index].text, index);
+                                                                                          Navigator.of(context).popUntil((route) => route.isFirst);
+                                                                                        },
+                                                                                        child: const Text('저장'),
+                                                                                      ),
+                                                                                      TextButton(
+                                                                                        onPressed: () {
+                                                                                          Navigator.pop(context);
+                                                                                        },
+                                                                                        child: const Text('닫기'),
+                                                                                      )
+                                                                                    ],
+                                                                                  ))
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      )),
+                                                      child: const Text(
+                                                          '문서 이름 수정')),
                                                   TextButton(
-                                                      onPressed: () => showDialog(
-                                                          context: context,
-                                                          builder:
-                                                              (BuildContext
-                                                                      context) =>
-                                                                  Dialog(
-                                                                    child: Padding(
-                                                                      padding:
-                                                                          const EdgeInsets
+                                                      onPressed: () =>
+                                                          showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                          context) =>
+                                                                      Dialog(
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
                                                                               .all(
                                                                               8.0),
-                                                                      child: Column(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize
-                                                                                .min,
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment
-                                                                                .center,
-                                                                        children: [
-                                                                          const Text(
-                                                                              '문서 삭제'),
-                                                                          const SizedBox(
-                                                                              height:
-                                                                                  15),
-                                                                          Container(
-                                                                              width:
-                                                                                  400,
-                                                                              padding: const EdgeInsets
-                                                                                  .all(
-                                                                                  10.0),
-                                                                              child:
-                                                                                  Text('해당 문서를 삭제하시겠습니까?')),
-                                                                          const SizedBox(
-                                                                              height:
-                                                                                  15),
-                                                                          Container(
-                                                                              width:
-                                                                                  300,
-                                                                              child:
-                                                                                  Row(
-                                                                                mainAxisAlignment:
-                                                                                    MainAxisAlignment.spaceEvenly,
-                                                                                children: [
-                                                                                  TextButton(
-                                                                                    style: ButtonStyle(
-                                                                                      backgroundColor: WidgetStateProperty.all(twoColor),
-                                                                                      // 배경 색
-                                                                                      padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
-                                                                                      shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                                                                                        borderRadius: BorderRadius.circular(8), // 둥근 모서리
-                                                                                      )),
-                                                                                    ),
-                                                                                    onPressed: () {
-                                                                                      _removeDocument(element['id']);
-                                                                                      Navigator.of(context).popUntil((route) => route.isFirst);
-                                                                                    },
-                                                                                    child: const Text('삭제'),
-                                                                                  ),
-                                                                                  TextButton(
-                                                                                    onPressed: () {
-                                                                                      Navigator.pop(context);
-                                                                                    },
-                                                                                    child: const Text('취소'),
-                                                                                  )
-                                                                                ],
-                                                                              ))
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  )),
-                                                      child: const Text('문서 삭제')),
+                                                                          child:
+                                                                              Column(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.min,
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.center,
+                                                                            children: [
+                                                                              const Text('문서 삭제'),
+                                                                              const SizedBox(height: 15),
+                                                                              Container(width: 400, padding: const EdgeInsets.all(10.0), child: Text('해당 문서를 삭제하시겠습니까?')),
+                                                                              const SizedBox(height: 15),
+                                                                              Container(
+                                                                                  width: 300,
+                                                                                  child: Row(
+                                                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                                    children: [
+                                                                                      TextButton(
+                                                                                        style: ButtonStyle(
+                                                                                          backgroundColor: WidgetStateProperty.all(twoColor),
+                                                                                          // 배경 색
+                                                                                          padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 12, horizontal: 24)),
+                                                                                          shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                                                                                            borderRadius: BorderRadius.circular(8), // 둥근 모서리
+                                                                                          )),
+                                                                                        ),
+                                                                                        onPressed: () {
+                                                                                          _removeDocument(element['id']);
+                                                                                          Navigator.of(context).popUntil((route) => route.isFirst);
+                                                                                        },
+                                                                                        child: const Text('삭제'),
+                                                                                      ),
+                                                                                      TextButton(
+                                                                                        onPressed: () {
+                                                                                          Navigator.pop(context);
+                                                                                        },
+                                                                                        child: const Text('취소'),
+                                                                                      )
+                                                                                    ],
+                                                                                  ))
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      )),
+                                                      child:
+                                                          const Text('문서 삭제')),
                                                   TextButton(
                                                       onPressed: () {
                                                         if (!isLoggedIn) {
                                                           showDialog(
                                                             context: context,
-                                                            builder: (BuildContext
-                                                                context) {
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
                                                               return AlertDialog(
                                                                 content: SizedBox(
                                                                     height: 100,
@@ -509,12 +487,12 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                                             "로그인이 필요합니다"))),
                                                                 actions: [
                                                                   TextButton(
-                                                                    onPressed: () {
+                                                                    onPressed:
+                                                                        () {
                                                                       Navigator.pushReplacement(
                                                                           context,
                                                                           MaterialPageRoute(
-                                                                              builder: (context) =>
-                                                                                  LoginScreen())); // 모달 창 닫기
+                                                                              builder: (context) => LoginScreen())); // 모달 창 닫기
                                                                     },
                                                                     child: Center(
                                                                         child: Text(
@@ -531,12 +509,14 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                             builder: (BuildContext
                                                                     context) =>
                                                                 Dialog(
-                                                                  child: Padding(
+                                                                  child:
+                                                                      Padding(
                                                                     padding:
                                                                         const EdgeInsets
                                                                             .all(
                                                                             8.0),
-                                                                    child: Column(
+                                                                    child:
+                                                                        Column(
                                                                       mainAxisSize:
                                                                           MainAxisSize
                                                                               .min,
@@ -551,8 +531,7 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                                                 450,
                                                                             child:
                                                                                 Row(
-                                                                              mainAxisAlignment:
-                                                                                  MainAxisAlignment.spaceBetween,
+                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                               children: [
                                                                                 FutureBuilder(
                                                                                     future: _getPreviewImage(element['id']),
@@ -781,24 +760,30 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                                   ),
                                                                 ));
                                                       },
-                                                      child: const Text('문서 공유')),
+                                                      child:
+                                                          const Text('문서 공유')),
                                                   const SizedBox(height: 15),
                                                   TextButton(
                                                     style: ButtonStyle(
                                                       backgroundColor:
-                                                          WidgetStateProperty.all(
-                                                              twoColor),
+                                                          WidgetStateProperty
+                                                              .all(twoColor),
                                                       // 배경 색
                                                       padding:
-                                                          WidgetStateProperty.all(
-                                                              EdgeInsets.symmetric(
-                                                                  vertical: 12,
-                                                                  horizontal: 24)),
-                                                      shape: WidgetStateProperty.all(
-                                                          RoundedRectangleBorder(
+                                                          WidgetStateProperty
+                                                              .all(EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          12,
+                                                                      horizontal:
+                                                                          24)),
+                                                      shape: WidgetStateProperty
+                                                          .all(
+                                                              RoundedRectangleBorder(
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                8), // 둥근 모서리
+                                                            BorderRadius
+                                                                .circular(
+                                                                    8), // 둥근 모서리
                                                       )),
                                                     ),
                                                     onPressed: () {
@@ -836,9 +821,9 @@ class _DocumentListState extends State<DocumentListScreen> {
                                 ))
                           ])));
                 })
-                        ]),
-                SizedBox(height: 30)
-              ],
-            )));
+            ]),
+            SizedBox(height: 30)
+          ],
+        )));
   }
 }

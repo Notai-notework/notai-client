@@ -37,7 +37,8 @@ class _LoginFormState extends State<LoginForm> {
     final api = await ApiService();
     Response response = await api.post("/login", data: {
       "email": emailController.text,
-      "password": passwordController.text});
+      "password": passwordController.text
+    });
 
     if (response.statusCode == 200) {
       String? access = response.headers['Authorization']![0];
@@ -46,11 +47,15 @@ class _LoginFormState extends State<LoginForm> {
       final storage = await FlutterSecureStorage();
       await storage.write(key: "Authorization", value: access);
       await storage.write(key: "refresh", value: refresh);
+      await storage.write(key: "isLoggedIn", value: "true");
 
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => MainScreen()));
     }
+
+    api.init();
   }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedOpacity(
@@ -112,9 +117,7 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                     SizedBox(width: 20),
                     LoginElevatedButton(
-                      onPressed:
-                        login,
-
+                      onPressed: login,
                       buttonText: "로그인",
                     ),
                     // SizedBox(width: 20),

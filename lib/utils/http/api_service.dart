@@ -27,7 +27,7 @@ class ApiService {
     return _instance;
   }
 
-  Future<void> _init() async {
+  Future<void> init() async {
     // dio = Dio(); // dio 초기화
     if (!_isInitialized) {
       dio = Dio();
@@ -78,13 +78,9 @@ class ApiService {
     String? access = await storage.read(key: 'Authorization');
     String? refresh = await storage.read(key: 'refresh');
 
-    if (access != null) {
-      dio.options.headers['Authorization'] = access;
-    }
+    dio.options.headers['Authorization'] = access;
 
-    if (refresh != null) {
-      dio.options.headers['refresh'] = refresh;
-    }
+    dio.options.headers['refresh'] = refresh;
 
     _isInitialized = true;
   }
@@ -171,7 +167,7 @@ class ApiService {
   // 초기화 대기
   Future<void> _ensureInitialized() async {
     if (!_isInitialized) {
-      await _init();
+      await init();
     }
   }
 

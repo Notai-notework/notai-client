@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:notai/screens/main_screen.dart';
+import 'package:notai/utils/http/api_service.dart';
 import 'package:notai/utils/jwt/jwt.dart';
 
 import '../../screens/login/login_screen.dart';
@@ -32,12 +34,14 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
 
   Future<void> _checkUser() async {
     var storage = await FlutterSecureStorage();
-    String? access = await storage.read(key: 'Authorization');
-    isLoggedIn = access != null;
+    final check = await storage.read(key: "isLoggedIn");
 
-    if (access != null) {
-      setState(() {
-        payload = Jwt().decodeJWT(access)!; // 데이터 업데이트
+    isLoggedIn = check == "true";
+
+    if (isLoggedIn) {
+      setState(() async {
+        String? access = await storage.read(key: 'Authorization');
+        payload = Jwt().decodeJWT(access!)!; // 데이터 업데이트
       });
     }
   }
@@ -74,11 +78,22 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
                       onPressed: () async {
                         if (isLoggedIn) {
                           final storage = await FlutterSecureStorage();
-                          storage.delete(key: "Authorization");
-                          storage.delete(key: "refresh");
+                          await storage.delete(key: "Authorization");
+                          await storage.delete(key: "refresh");
+                          await storage.write(
+                              key: "isLoggedIn", value: "false");
+
+                          final api = await ApiService();
+                          api.init();
+
                           setState(() {
                             isLoggedIn = false;
                           });
+
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MainScreen()));
                         }
                       },
                       child: Text('로그아웃',
@@ -89,11 +104,12 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
             Padding(
                 padding: EdgeInsets.all(10),
                 child: TextButton(
-                    onPressed: () async {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LoginScreen()));
+                    onPressed: () {
+                      if (!isLoggedIn)
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginScreen()));
                     },
                     child: Text(isLoggedIn ? "${payload['name']} 님" : '로그인',
                         style: const TextStyle(

@@ -10,6 +10,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 // import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:notai/screens/login/login_screen.dart';
+import 'package:notai/screens/main_screen.dart';
 import 'package:notai/utils/color/color.dart';
 import 'package:notai/utils/file/file_management.dart';
 import 'package:notai/utils/http/api_service.dart';
@@ -75,7 +76,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
 
     _images = images;
     notifier = List.generate(_images.length,
-        (index) => CustomNotifier([1, 3, 5], ScribblePointerMode.mouseOnly));
+        (index) => CustomNotifier([1, 3, 5], ScribblePointerMode.penOnly));
 
     _controller.addListener(() {
       setState(() {
@@ -309,12 +310,15 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
 
   Future<void> _checkUser() async {
     var storage = await FlutterSecureStorage();
-    String? access = await storage.read(key: 'Authorization');
-    isLoggedIn = access != null;
+    final check = await storage.read(key: "isLoggedIn");
 
-    if (access != null) {
+    isLoggedIn = check == "true";
+
+    String? access = await storage.read(key: 'Authorization');
+
+    if (isLoggedIn) {
       setState(() {
-        payload = Jwt().decodeJWT(access)!; // 데이터 업데이트
+        payload = Jwt().decodeJWT(access!)!; // 데이터 업데이트
       });
     }
   }
@@ -345,7 +349,67 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
 
     return WillPopScope(
         onWillPop: () async {
-          _save(widget.document['id'], widget.document['name']);
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Center(
+                      child: Text("페이지를 벗어나시겠습니까?",
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  actions: [
+                    Center(
+                        child: isSaving
+                            ? CircularProgressIndicator()
+                            : Text(
+                                "이 페이지를 벗어나면 모든 내용이 저장되며,\n이후 수정할 수 없습니다. 그래도 진행하시겠습니까?",
+                                style: TextStyle(fontSize: 20))),
+                    SizedBox(height: 30),
+                    Center(
+                        child: Container(
+                            width: 200,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                TextButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        WidgetStateProperty.all(twoColor),
+                                    // 배경 색
+                                    padding: WidgetStateProperty.all(
+                                        EdgeInsets.symmetric(
+                                            vertical: 12, horizontal: 24)),
+                                    shape: WidgetStateProperty.all(
+                                        RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(8), // 둥근 모서리
+                                    )),
+                                  ),
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+
+                                    setState(() {
+                                      isSaving = true;
+                                    });
+
+                                    await _save(widget.document['id'],
+                                        widget.document['name']);
+
+                                    setState(() {
+                                      isSaving = false;
+                                    });
+                                  },
+                                  child: const Text('확인'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text('취소'),
+                                ),
+                              ],
+                            )))
+                  ],
+                );
+              });
+          // _save(widget.document['id'], widget.document['name']);
           return false;
         },
         child: Scaffold(
@@ -412,62 +476,68 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                     Expanded(
-                        child: SizedBox(
-                            width: containerWidth,
-                            height: double.infinity,
-                            child: isLoading
-                                ? const Center(
-                                    child: Column(children: [
-                                    const SizedBox(height: 300),
-                                    CircularProgressIndicator(),
-                                    const SizedBox(height: 50),
-                                    Text('문서를 불러오고 있습니다..')
-                                  ]))
-                                : isSaving
+                        child: Padding(
+                            padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                            child: SizedBox(
+                                width: double.infinity,
+                                height: double.infinity,
+                                child: isLoading
                                     ? const Center(
                                         child: Column(children: [
                                         const SizedBox(height: 300),
                                         CircularProgressIndicator(),
                                         const SizedBox(height: 50),
-                                        Text('문서를 저장 중 입니다..')
+                                        Text('문서를 불러오고 있습니다..')
                                       ]))
-                                    : PageView.builder(
-                                        controller: _pageController,
-                                        onPageChanged: (index) {
-                                          _currentImageIndex = index;
-                                          // notifier[index].clear();
-                                        },
-                                        itemCount: _images.length,
-                                        itemBuilder: (context, index) {
-                                          print(_imagesSizes[index]);
-                                          return SingleChildScrollView(
-                                              child: Center(
-                                                  child: InteractiveViewer(
-                                            // boundaryMargin:
-                                            //     const EdgeInsets.all(20.0), f
-                                            minScale: 1.0,
-                                            maxScale: 4.0,
-                                            child: RepaintBoundary(
-                                                key: _globalKeys[index],
-                                                child: Container(
-                                                  // width: 400.0,
-                                                  // height: 300.0,
-                                                  width: _imagesSizes[index][0],
-                                                  // width: 2000,
-                                                  height: _imagesSizes[index]
-                                                      [1],
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      image: DecorationImage(
-                                                          image: MemoryImage(
-                                                              _images[index]),
-                                                          fit: BoxFit.contain)),
-                                                  child: Scribble(
-                                                      notifier:
-                                                          notifier[index]),
-                                                )),
-                                          )));
-                                        }))),
+                                    : isSaving
+                                        ? const Center(
+                                            child: Column(children: [
+                                            const SizedBox(height: 300),
+                                            CircularProgressIndicator(),
+                                            const SizedBox(height: 50),
+                                            Text('문서를 저장 중 입니다..')
+                                          ]))
+                                        : PageView.builder(
+                                            controller: _pageController,
+                                            onPageChanged: (index) {
+                                              _currentImageIndex = index;
+                                              // notifier[index].clear();
+                                            },
+                                            itemCount: _images.length,
+                                            itemBuilder: (context, index) {
+                                              print(_imagesSizes[index]);
+                                              return SingleChildScrollView(
+                                                  child: Center(
+                                                      child: InteractiveViewer(
+                                                // boundaryMargin:
+                                                //     const EdgeInsets.all(20.0), f
+                                                minScale: 1.0,
+                                                maxScale: 4.0,
+                                                child: RepaintBoundary(
+                                                    key: _globalKeys[index],
+                                                    child: Container(
+                                                      // width: 400.0,
+                                                      // height: 300.0,
+                                                      width: _imagesSizes[index]
+                                                          [0],
+                                                      // width: 2000,
+                                                      height:
+                                                          _imagesSizes[index]
+                                                              [1],
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          image: DecorationImage(
+                                                              image: MemoryImage(
+                                                                  _images[
+                                                                      index]),
+                                                              fit: BoxFit
+                                                                  .contain)),
+                                                      child: Scribble(
+                                                          notifier:
+                                                              notifier[index]),
+                                                    )),
+                                              )));
+                                            })))),
                     SizedBox(
                         width: _isChatVisible ? 800 : double.infinity,
                         height: 100,
@@ -581,9 +651,6 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
   }
 
   Future<void> _save(int id, String fileName) async {
-    setState(() {
-      isSaving = true;
-    });
     try {
       for (int i = 0; i < _globalKeys.length; i++) {
         RenderRepaintBoundary boundary = _globalKeys[i]
@@ -622,11 +689,12 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
     final fm = await FileManagement();
     await fm.convertImagesToPdf(id, fileName, _imagesSizes);
 
-    Navigator.pop(context);
-
     setState(() {
       isSaving = false;
     });
+
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => MainScreen()));
   }
 
   // 이미지 크기 조정 함수
@@ -746,12 +814,16 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
         elevation: selected ? 4 : 0,
         shape: const CircleBorder(),
         child: InkWell(
-          onTap: () => notifier[_currentImageIndex].setStrokeWidth(strokeWidth),
+          onTap: () async {
+            for (CustomNotifier i in notifier) {
+              i.setStrokeWidth(strokeWidth);
+            }
+          },
           customBorder: const CircleBorder(),
           child: AnimatedContainer(
             duration: kThemeAnimationDuration,
-            width: strokeWidth <= 1 ? 5 : strokeWidth * 3,
-            height: strokeWidth <= 1 ? 5 : strokeWidth * 3,
+            width: strokeWidth * 8,
+            height: strokeWidth * 8,
             decoration: BoxDecoration(
                 color: state.map(
                   drawing: (s) => Color(s.selectedColor),
@@ -839,14 +911,19 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
   }) {
     try {
       return ValueListenableBuilder(
-        valueListenable: notifier[_currentImageIndex].select(
+        valueListenable: notifier[0].select(
             (value) => value is Drawing && value.selectedColor == color.value),
         builder: (context, value, child) => Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: ColorButton(
             color: color,
             isActive: value,
-            onPressed: () => notifier[_currentImageIndex].setColor(color),
+            // onPressed: () => notifier[_currentImageIndex].setColor(color),
+            onPressed: () async {
+              for (CustomNotifier i in notifier) {
+                i.setColor(color);
+              }
+            },
           ),
         ),
       );
