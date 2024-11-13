@@ -39,11 +39,11 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
     isLoggedIn = check == "true";
 
     if (isLoggedIn) {
-      setState(() async {
-        String? access = await storage.read(key: 'Authorization');
-        payload = Jwt().decodeJWT(access!)!; // 데이터 업데이트
-      });
+      String? access = await storage.read(key: 'Authorization');
+      payload = Jwt().decodeJWT(access!)!; // 데이터 업데이트
     }
+
+    setState(() {});
   }
 
   @override
@@ -106,7 +106,7 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
                 child: TextButton(
                     onPressed: () {
                       if (!isLoggedIn)
-                        Navigator.pushReplacement(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => LoginScreen()));
