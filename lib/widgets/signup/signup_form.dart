@@ -75,6 +75,11 @@ class _SignUpFormState extends State<SignUpForm> {
     });
   }
 
+  void onEmailAuthLocked() async{
+    await EmailAuth();
+  }
+
+
   Future<void> NickNameCheck() async {
     final api = await ApiService();
     try {
@@ -110,7 +115,8 @@ class _SignUpFormState extends State<SignUpForm> {
       print("예기치 못한 오류 발생: $e");
     }
   }
-
+   //이메일 인증완료되면 바튼 안 눌리게
+   //
   Future<void> SignUp() async {
     if (isFormComplete() == false) {
       await SignUpErrorDialog(context);
@@ -213,6 +219,9 @@ class _SignUpFormState extends State<SignUpForm> {
 
       if (response.statusCode == 200) {
         print("이메일요청 완료");
+        setState(() {
+          isEmailLocked = true;
+        });
         EmailDialog(context, onEmailAuthSuccess);
       } else {
         print("실패: ${response.statusCode}");
@@ -271,8 +280,8 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                     Flexible(
                       child: EmailAuthElevatedButton(
-                        onPressed: EmailCheck,
-                        buttonText: '',
+                        onPressed: isEmailLocked ? () {} : onEmailAuthLocked, // 인증 완료되면 버튼 비활성화
+                        buttonText: isEmailLocked ? '인증 완료' : '이메일 인증',
                       ),
                     ),
                   ],
