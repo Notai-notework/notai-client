@@ -102,12 +102,14 @@ class _SignUpFormState extends State<SignUpForm> {
 
   Future<void> SignUp() async {
     if (!isEmailLocked) {
-      print("이메일 중복은 필수!");
+      print("이메일 중복 확인은 필수!");
       await EmailLockedDialog(context);
+      return;
     }
     if (!isNickNameLocked) {
-      print("닉네임 중복은 필수!");
+      print("닉네임 중복 확인은 필수!");
       await NicknameLockedDialog(context);
+      return;
     }
 
     final api = await ApiService();
