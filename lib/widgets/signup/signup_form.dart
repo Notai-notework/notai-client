@@ -22,6 +22,7 @@ import '../global/everyDialog/sign_up_http_error.dart';
 import '../global/everyLoginButton/rounded_name_input.dart';
 import '../global/everyLoginButton/rounded_number_input.dart';
 import '../global/everyLoginButton/rounded_password_input.dart';
+import 'package:flutter/cupertino.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({
@@ -207,6 +208,24 @@ class _SignUpFormState extends State<SignUpForm> {
 
   Future<void> EmailAuth() async {
     final api = await ApiService();
+    if (emailController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("이메일 입력"),
+          content: Text("이메일을 입력해 주세요."),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+      return;
+    }
     showDialog(
       context: context,
       barrierDismissible: true, // 다른 부분을 눌러도 안 닫: false
@@ -227,7 +246,23 @@ class _SignUpFormState extends State<SignUpForm> {
         print("실패: ${response.statusCode}");
       }
     } catch (e) {
+      Navigator.pop(context); // 로딩 화면 닫기
       print("API 요청 오류: $e");
+      showDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("네트워크 오류"),
+          content: Text("네트워크 혹은 이메일을 다시 확인해주세요."),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
     }
   }
 
