@@ -18,7 +18,6 @@ import 'package:notai/utils/time/time_parser.dart';
 import 'package:notai/widgets/document/custom_notifier.dart';
 import 'package:notai/widgets/global/global_appbar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pdf_render/pdf_render.dart';
 import 'package:scribble/scribble.dart';
 import 'package:value_notifier_tools/value_notifier_tools.dart';
 import 'package:image/image.dart' as img;
