@@ -96,6 +96,12 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
   }
 
   void toggleChat() {
+    if (!isLoggedIn) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      return;
+    }
+
     if (!_isChatVisible) {
       var api = ApiService();
       // const storage = FlutterSecureStorage();
@@ -445,20 +451,14 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
                         MaterialPageRoute(builder: (context) => LoginScreen()));
                   },
                   child: TextButton(
-                      onPressed: () async {
-                        // print('dd');
-                        // FlutterSecureStorage storage = await FlutterSecureStorage();
-                        // var response = await ApiService().post('/login',
-                        //     data: {'email': 'a@test.com', 'password': '1234'});
-                        // // await storage.delete(key: 'Authorization');
-                        // await storage.write(
-                        //     key: 'Authorization',
-                        //     value: response.headers['Authorization']![0]);
-                        // await storage.write(
-                        //     key: 'refresh',
-                        //     value: response.headers['refresh']![0]);
-                        // String? auh = await storage.read(key: 'Authorization');
-                        // print('auh: $auh');
+                      onPressed: () {
+                        if (!isLoggedIn) {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginScreen()));
+                          return;
+                        }
                       },
                       child: Text(isLoggedIn ? payload['name'] : '로그인',
                           style: const TextStyle(
