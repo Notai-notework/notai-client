@@ -22,6 +22,7 @@ import '../global/everyDialog/sign_up_http_error.dart';
 import '../global/everyLoginButton/rounded_name_input.dart';
 import '../global/everyLoginButton/rounded_number_input.dart';
 import '../global/everyLoginButton/rounded_password_input.dart';
+import 'package:flutter/cupertino.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({
@@ -75,13 +76,34 @@ class _SignUpFormState extends State<SignUpForm> {
     });
   }
 
-  void onEmailAuthLocked() async{
+  void onEmailAuthLocked() async {
     await EmailAuth();
   }
 
+  void onNickNameAuthLocked() async {
+    await NickNameCheck();
+  }
 
   Future<void> NickNameCheck() async {
     final api = await ApiService();
+    if (nickNameController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("닉네임 입력"),
+          content: Text("닉네임을 입력해 주세요."),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+      return;
+    }
     try {
       Response response = await api
           .post("/nickname-check", data: {"nickname": nickNameController.text});
@@ -115,8 +137,7 @@ class _SignUpFormState extends State<SignUpForm> {
       print("예기치 못한 오류 발생: $e");
     }
   }
-   //이메일 인증완료되면 바튼 안 눌리게
-   //
+
   Future<void> SignUp() async {
     if (isFormComplete() == false) {
       await SignUpErrorDialog(context);
@@ -207,6 +228,24 @@ class _SignUpFormState extends State<SignUpForm> {
 
   Future<void> EmailAuth() async {
     final api = await ApiService();
+    if (emailController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("이메일 입력"),
+          content: Text("이메일을 입력해 주세요."),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+      return;
+    }
     showDialog(
       context: context,
       barrierDismissible: true, // 다른 부분을 눌러도 안 닫: false
@@ -227,7 +266,23 @@ class _SignUpFormState extends State<SignUpForm> {
         print("실패: ${response.statusCode}");
       }
     } catch (e) {
+      Navigator.pop(context); // 로딩 화면 닫기
       print("API 요청 오류: $e");
+      showDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("네트워크 오류"),
+          content: Text("네트워크 혹은 이메일을 다시 확인해주세요."),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -280,7 +335,8 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                     Flexible(
                       child: EmailAuthElevatedButton(
-                        onPressed: isEmailLocked ? () {} : onEmailAuthLocked, // 인증 완료되면 버튼 비활성화
+                        onPressed: isEmailLocked ? () {} : onEmailAuthLocked,
+                        // 인증 완료되면 버튼 비활성화
                         buttonText: isEmailLocked ? '인증 완료' : '이메일 인증',
                       ),
                     ),
@@ -332,8 +388,9 @@ class _SignUpFormState extends State<SignUpForm> {
                     Expanded(
                       flex: 1, // 전체 공간에서 1/4 크기 할당
                       child: NickNameCheckButton(
-                        onPressed: NickNameCheck,
-                        buttonText: '',
+                        onPressed:
+                            isNickNameLocked ? () {} : onNickNameAuthLocked,
+                        buttonText: isNickNameLocked ? '인증 완료' : '중복 확인',
                       ),
                     ),
                   ],
