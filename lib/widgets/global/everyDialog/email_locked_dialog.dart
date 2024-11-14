@@ -6,7 +6,7 @@ Future<void> EmailLockedDialog(BuildContext context)async {
     context: context,
     builder: (context) => CupertinoAlertDialog(
       title: Text('중복 확인'),
-      content: Text('이메일 중복은 필수입니다.'),
+      content: Text('이메일 중복 확인은 필수입니다.'),
       actions: [
         CupertinoDialogAction(
           child: Text('확인'),

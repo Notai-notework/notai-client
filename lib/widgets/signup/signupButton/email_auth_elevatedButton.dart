@@ -24,7 +24,7 @@ class EmailAuthElevatedButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         child: Text(
-          "이메일인증",
+          buttonText,
           style: TextStyle(
             fontSize: 13,
             // fontWeight: FontWeight.bold,

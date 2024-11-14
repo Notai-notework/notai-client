@@ -52,6 +52,17 @@ class _SignUpFormState extends State<SignUpForm> {
   bool isEmailLocked = false;
   bool isNickNameLocked = false;
 
+  // 입력 폼 모두 입력 여부
+  bool isFormComplete() {
+    return !emailController.text.isEmpty ||
+        !passwordController.text.isEmpty ||
+        !passwordCheckController.text.isEmpty ||
+        !nameController.text.isEmpty ||
+        !phoneNumberController.text.isEmpty ||
+        !nickNameController.text.isEmpty ||
+        !addressController.text.isEmpty;
+  }
+
   void onEmailAuthSuccess() {
     setState(() {
       isEmailLocked = true; // 이메일 인증 후 입력창 잠금
@@ -63,6 +74,11 @@ class _SignUpFormState extends State<SignUpForm> {
       isNickNameLocked = true;
     });
   }
+
+  void onEmailAuthLocked() async{
+    await EmailAuth();
+  }
+
 
   Future<void> NickNameCheck() async {
     final api = await ApiService();
@@ -99,8 +115,14 @@ class _SignUpFormState extends State<SignUpForm> {
       print("예기치 못한 오류 발생: $e");
     }
   }
-
+   //이메일 인증완료되면 바튼 안 눌리게
+   //
   Future<void> SignUp() async {
+    if (isFormComplete() == false) {
+      await SignUpErrorDialog(context);
+      return;
+    }
+
     if (!isEmailLocked) {
       print("이메일 중복 확인은 필수!");
       await EmailLockedDialog(context);
@@ -197,6 +219,9 @@ class _SignUpFormState extends State<SignUpForm> {
 
       if (response.statusCode == 200) {
         print("이메일요청 완료");
+        setState(() {
+          isEmailLocked = true;
+        });
         EmailDialog(context, onEmailAuthSuccess);
       } else {
         print("실패: ${response.statusCode}");
@@ -255,8 +280,8 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                     Flexible(
                       child: EmailAuthElevatedButton(
-                        onPressed: EmailCheck,
-                        buttonText: '',
+                        onPressed: isEmailLocked ? () {} : onEmailAuthLocked, // 인증 완료되면 버튼 비활성화
+                        buttonText: isEmailLocked ? '인증 완료' : '이메일 인증',
                       ),
                     ),
                   ],
