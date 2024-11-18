@@ -75,7 +75,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
 
     _images = images;
     notifier = List.generate(_images.length,
-        (index) => CustomNotifier([1, 3, 5], ScribblePointerMode.penOnly));
+        (index) => CustomNotifier([1, 3, 5], ScribblePointerMode.all));
 
     _controller.addListener(() {
       setState(() {
@@ -445,7 +445,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
                       children: [
                     Expanded(
                         child: Padding(
-                            padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                             child: SizedBox(
                                 width: double.infinity,
                                 height: double.infinity,
@@ -657,12 +657,13 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
     final fm = await FileManagement();
     await fm.convertImagesToPdf(id, fileName, _imagesSizes);
 
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => MainScreen()));
+    // Navigator.pop(context);
+
     setState(() {
       isSaving = false;
     });
-
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => MainScreen()));
   }
 
   // 이미지 크기 조정 함수

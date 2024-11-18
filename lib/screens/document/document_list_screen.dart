@@ -7,6 +7,7 @@ import 'package:http/http.dart';
 import 'package:notai/repositories/document_repository.dart';
 import 'package:notai/screens/document/document_inner_screen.dart';
 import 'package:notai/screens/login/login_screen.dart';
+import 'package:notai/screens/main_screen.dart';
 import 'package:notai/utils/color/color.dart';
 import 'package:notai/utils/file/file_management.dart';
 import 'package:file_picker/file_picker.dart';
@@ -156,6 +157,7 @@ class _DocumentListState extends State<DocumentListScreen> {
     await dr.updateName(id, newName);
     setState(() {
       _documents?[index].update('name', (value) => newName);
+      _documentNameInputControllers[index].text = newName;
     });
   }
 
@@ -393,9 +395,10 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                                                             borderRadius: BorderRadius.circular(8), // 둥근 모서리
                                                                                           )),
                                                                                         ),
-                                                                                        onPressed: () {
-                                                                                          _modifyDocumentName(element['id'], _documentNameInputControllers[index].text, index);
-                                                                                          Navigator.of(context).popUntil((route) => route.isFirst);
+                                                                                        onPressed: () async {
+                                                                                          await _modifyDocumentName(element['id'], _documentNameInputControllers[index].text, index);
+                                                                                          Navigator.pop(context);
+                                                                                          Navigator.pop(context);
                                                                                         },
                                                                                         child: const Text('저장'),
                                                                                       ),
@@ -451,9 +454,9 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                                                             borderRadius: BorderRadius.circular(8), // 둥근 모서리
                                                                                           )),
                                                                                         ),
-                                                                                        onPressed: () {
-                                                                                          _removeDocument(element['id']);
-                                                                                          Navigator.of(context).popUntil((route) => route.isFirst);
+                                                                                        onPressed: () async {
+                                                                                          await _removeDocument(element['id']);
+                                                                                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen()));
                                                                                         },
                                                                                         child: const Text('삭제'),
                                                                                       ),
@@ -705,7 +708,7 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                                                                                                                     if (!isUploading)
                                                                                                                                                       TextButton(
                                                                                                                                                         onPressed: () {
-                                                                                                                                                          Navigator.of(context).popUntil((route) => route.isFirst); // 모달 창 닫기
+                                                                                                                                                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen())); // 모달 창 닫기
                                                                                                                                                         },
                                                                                                                                                         child: Center(child: Text('닫기')),
                                                                                                                                                       ),

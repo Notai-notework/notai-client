@@ -1,0 +1,10 @@
+fix: email duplication check
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch feature/auth
+# Your branch is up to date with 'origin/feature/auth'.
+#
+# Changes to be committed:
+#	modified:   lib/widgets/signup/signup_form.dart
+#
