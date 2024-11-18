@@ -75,7 +75,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
 
     _images = images;
     notifier = List.generate(_images.length,
-        (index) => CustomNotifier([1, 3, 5], ScribblePointerMode.all));
+        (index) => CustomNotifier([1, 3, 5], ScribblePointerMode.mouseAndPen));
 
     _controller.addListener(() {
       setState(() {
@@ -657,9 +657,9 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
     final fm = await FileManagement();
     await fm.convertImagesToPdf(id, fileName, _imagesSizes);
 
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => MainScreen()));
-    // Navigator.pop(context);
+    // Navigator.pushReplacement(
+    //     context, MaterialPageRoute(builder: (context) => MainScreen()));
+    Navigator.pop(context);
 
     setState(() {
       isSaving = false;

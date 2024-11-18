@@ -146,12 +146,17 @@ class _DocumentListState extends State<DocumentListScreen> {
     });
   }
 
+  Future<List<Map<String, dynamic>>> _fetchDocumentsList() async {
+    final dr = DocumentRepository();
+    return await dr.getDocuments();
+  }
+
   Future<File> _getPreviewImage(int id) async {
     Directory directory = await getApplicationDocumentsDirectory();
     return await File(directory.path + "/$id/images/page_1.png");
   }
 
-  // 문서 이름 수정
+// 문서 이름 수정
   Future<void> _modifyDocumentName(int id, String newName, int index) async {
     final dr = DocumentRepository();
     await dr.updateName(id, newName);
@@ -161,8 +166,8 @@ class _DocumentListState extends State<DocumentListScreen> {
     });
   }
 
-  // 문서 삭제
-  Future<void> _removeDocument(int id) async {
+// 문서 삭제
+  Future<void> _removeDocument(int id, int index) async {
     final dr = DocumentRepository();
     final fm = FileManagement();
 
@@ -170,6 +175,7 @@ class _DocumentListState extends State<DocumentListScreen> {
     await fm.removeDocument(id);
 
     setState(() {
+      _documentNameInputControllers.removeAt(index);
       _documents?.removeWhere((e) => e['id'] == id);
     });
   }
@@ -297,7 +303,15 @@ class _DocumentListState extends State<DocumentListScreen> {
                             // element가 null이거나 id가 없으면 에러 처리 혹은 다른 로직 실행
                             return Container(); // ErrorScreen은 예시이며, 상황에 맞는 다른 위젯을 반환할 수 있습니다.
                           }
-                        }));
+                        })).then((_) async {
+                          var result = await _fetchDocumentsList();
+                          setState(() {
+                            _documents = result;
+                          });
+                          setState(() {
+
+                          });
+                        });
                       },
                       child: Container(
                           decoration: BoxDecoration(
@@ -455,8 +469,9 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                                                           )),
                                                                                         ),
                                                                                         onPressed: () async {
-                                                                                          await _removeDocument(element['id']);
-                                                                                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen()));
+                                                                                          await _removeDocument(element['id'], index);
+                                                                                          Navigator.of(context).popUntil((route) => route.isFirst);
+                                                                                          // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen()));
                                                                                         },
                                                                                         child: const Text('삭제'),
                                                                                       ),
