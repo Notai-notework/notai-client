@@ -27,6 +27,8 @@ dependencies:
   dart_jsonwebtoken: ^2.14.1
   pdf: ^3.11.1
   pdf_render: ^1.4.12
+  remedi_kopo: ^0.0.2
+  webview_flutter: ^2.8.0
 
 dev_dependencies:
   flutter_test:
