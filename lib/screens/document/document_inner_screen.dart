@@ -75,7 +75,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
 
     _images = images;
     notifier = List.generate(_images.length,
-        (index) => CustomNotifier([1, 3, 5], ScribblePointerMode.mouseAndPen));
+        (index) => CustomNotifier([1, 3, 5], ScribblePointerMode.penOnly));
 
     _controller.addListener(() {
       setState(() {
