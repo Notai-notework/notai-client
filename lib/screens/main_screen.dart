@@ -11,7 +11,9 @@ import 'package:notai/widgets/global/global_appbar.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final int? requestIndex;
+
+  const MainScreen({super.key, this.requestIndex});
 
   @override
   State<MainScreen> createState() => _MainScreen();
@@ -21,7 +23,6 @@ class _MainScreen extends State<MainScreen> {
   int _selectedIndex = 0;
   bool isLoggedIn = false;
 
-  // 바텀 네비게이션 탭에 대한 페이지 리스트
   static final List<Widget> _pages = <Widget>[
     const DocumentListScreen(),
     const CommunityScreen(),
@@ -39,6 +40,10 @@ class _MainScreen extends State<MainScreen> {
     // logout();
     // initDocument();
     checkLoggedIn();
+
+    if (widget.requestIndex != null) {
+      _selectedIndex = widget.requestIndex!;
+    }
   }
 
   // 도큐먼트 초기화용

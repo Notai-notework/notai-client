@@ -1,11 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notai/repositories/document_repository.dart';
+import 'package:notai/screens/main_screen.dart';
 import 'package:notai/utils/file/file_management.dart';
 import 'package:notai/utils/http/api_service.dart';
 import 'package:notai/utils/time/time_parser.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../../utils/jwt/jwt.dart';
 
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({super.key});
@@ -16,6 +20,7 @@ class CommunityScreen extends StatefulWidget {
 
 class _CommunityScreenState extends State<CommunityScreen> {
   List<dynamic> _docs = [];
+  late Map<String, dynamic> payload;
 
   Future<void> fetchCommunityDocs() async {
     final as = await ApiService();
@@ -48,10 +53,22 @@ class _CommunityScreenState extends State<CommunityScreen> {
     "$path/$id/images/"; // page_0.png .... page_n.png
   }
 
+  Future<void> _fetchUserPayload() async {
+    var storage = await FlutterSecureStorage();
+
+    String? access = await storage.read(key: 'Authorization');
+
+    setState(() {
+      payload = Jwt().decodeJWT(access!)!; // 데이터 업데이트
+      print(payload);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     fetchCommunityDocs();
+    _fetchUserPayload();
   }
 
   @override
@@ -121,6 +138,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       DocumentItem(
                         data: _docs[i],
                         index: i,
+                        authorEmail: payload['email'],
                       )
                 ],
               ),
@@ -136,8 +154,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
 class DocumentItem extends StatefulWidget {
   final Map<String, dynamic> data;
   final int index;
+  final String authorEmail;
 
-  const DocumentItem({super.key, required this.data, required this.index});
+  const DocumentItem(
+      {super.key,
+      required this.data,
+      required this.index,
+      required this.authorEmail});
 
   @override
   _DocumentItemState createState() => _DocumentItemState();
@@ -146,6 +169,7 @@ class DocumentItem extends StatefulWidget {
 class _DocumentItemState extends State<DocumentItem> {
   bool isLiked = false;
   bool isDownloading = false;
+  bool isRemoving = false;
 
   void _showDocumentInfo(BuildContext context) {
     final tp = TimeParser();
@@ -156,50 +180,58 @@ class _DocumentItemState extends State<DocumentItem> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '문서 정보',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  '작성자: ${widget.data['user']['nickname']}',
-                  style: TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  '등록일: ${tp.toFormat(widget.data['createdAt'])}',
-                  style: TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  '태그: ${widget.data['tagName']}',
-                  style: TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
+          child: Container(
+            width: 600,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '문서 정보',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
-                    child: const Text('닫기'),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  Text(
+                    '작성자: ${widget.data['user']['nickname']}',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    '소개: ${widget.data['content']}',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    '등록일: ${tp.toFormat(widget.data['createdAt'])}',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    '태그: ${widget.data['tagName']}',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 20),
+                  Align(
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: const Text('닫기'),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -296,10 +328,10 @@ class _DocumentItemState extends State<DocumentItem> {
                   }
                 },
                 itemBuilder: (BuildContext context) => [
-                  const PopupMenuItem<String>(
-                    value: 'scrap',
-                    child: Text('스크랩하기'),
-                  ),
+                  // const PopupMenuItem<String>(
+                  //   value: 'scrap',
+                  //   child: Text('스크랩하기'),
+                  // ),
                   const PopupMenuItem<String>(
                     value: 'viewInfo',
                     child: Text('문서 정보 보기'),
@@ -358,6 +390,67 @@ class _DocumentItemState extends State<DocumentItem> {
                     value: 'block',
                     child: const Text('다운로드'),
                   ),
+                  if (widget.authorEmail == widget.data['user']['email'])
+                    PopupMenuItem(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => CupertinoAlertDialog(
+                            title: Text('공유된 문서를 삭제 하시겠습니까?'),
+                            content: Center(
+                              child: isRemoving
+                                  ? CircularProgressIndicator()
+                                  : Text("삭제 후에는 복구가 불가능합니다"),
+                            ),
+                            actions: [
+                              if (!isRemoving)
+                                TextButton(
+                                    onPressed: () async {
+                                      setState(() {
+                                        isRemoving = true;
+                                      });
+
+                                      final api = await ApiService();
+                                      try {
+                                        Response response = await api.delete(
+                                            "/api/documents",
+                                            queryParameters: {
+                                              "documentId": widget.data['id']
+                                            });
+
+                                        if (response.statusCode == 204) {
+                                          Navigator.popUntil(context,
+                                              (route) => route.isFirst);
+                                          Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      MainScreen(
+                                                          requestIndex: 1)));
+                                        }
+                                      } on DioException catch (e) {
+                                        print("공유 문서 삭제 에러");
+                                      }
+                                    },
+                                    child: Text(
+                                      "확인",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    )),
+                              if (!isRemoving)
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("취소"))
+                            ],
+                          ),
+                        );
+                      },
+                      value: 'remove',
+                      child: const Text('삭제'),
+                    ),
                 ],
                 icon: const Icon(Icons.more_vert, color: Colors.purple),
                 shape: RoundedRectangleBorder(

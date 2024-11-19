@@ -91,6 +91,10 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
                           });
 
                           Navigator.popUntil(context, (route) => route.isFirst);
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                    builder: (context) => MainScreen()));
                         }
                       },
                       child: Text('로그아웃',
