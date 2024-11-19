@@ -4,12 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:notai/widgets/global/everyDialog/email_dialog.dart';
 import 'package:notai/widgets/global/everyDialog/nickname_error_dialog.dart';
+import 'package:notai/widgets/signup/signupButton/address_search_Button.dart';
 import 'package:notai/widgets/signup/signupButton/email_auth_elevatedButton.dart';
+import 'package:notai/widgets/signup/signupButton/postcode_input.dart';
 import 'package:notai/widgets/signup/signupButton/rounded_email_imput.dart';
 import 'package:notai/widgets/signup/signupButton/rounded_address_input.dart';
 import 'package:notai/widgets/signup/signupButton/rounded_nickname_input.dart';
 import 'package:notai/widgets/signup/signupButton/sign_up_clear_elevatedButton.dart';
 import 'package:notai/widgets/signup/signupButton/nickname_check_button.dart';
+import 'package:remedi_kopo/remedi_kopo.dart';
 import '../../utils/color/color.dart';
 import '../../utils/http/api_service.dart';
 import '../global/everyDialog/email_check_dialog.dart';
@@ -42,6 +45,9 @@ class SignUpForm extends StatefulWidget {
   _SignUpFormState createState() => _SignUpFormState();
 }
 
+final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+Map<String, String> formData = {};
+
 class _SignUpFormState extends State<SignUpForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -49,7 +55,11 @@ class _SignUpFormState extends State<SignUpForm> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController nickNameController = TextEditingController();
+
+  // final TextEditingController addressController = TextEditingController();
+  final TextEditingController postcodeController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
+  final TextEditingController detailAddressController = TextEditingController();
   bool isEmailLocked = false;
   bool isNickNameLocked = false;
 
@@ -61,7 +71,9 @@ class _SignUpFormState extends State<SignUpForm> {
         !nameController.text.isEmpty ||
         !phoneNumberController.text.isEmpty ||
         !nickNameController.text.isEmpty ||
-        !addressController.text.isEmpty;
+        !postcodeController.text.isEmpty ||
+        !addressController.text.isEmpty ||
+        !detailAddressController.text.isEmpty;
   }
 
   void onEmailAuthSuccess() {
@@ -182,9 +194,6 @@ class _SignUpFormState extends State<SignUpForm> {
     }
   }
 
-  //회원가입완료 버튼
-  //이것도 api랑 그 외 오류처리 하면 될 것 같기는 함
-
   Future<void> EmailCheck() async {
     final api = await ApiService();
     if (emailController.text.isEmpty) {
@@ -288,6 +297,35 @@ class _SignUpFormState extends State<SignUpForm> {
   }
 
   //이메일 인증코드 및 이메일 인증 완료
+
+  void searchAddress(BuildContext context) async {
+    KopoModel? model = await Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder: (context) => RemediKopo(),
+      ),
+    );
+
+    if (model != null) {
+      final postcode = model.zonecode ?? '';
+      postcodeController.value = TextEditingValue(
+        text: postcode,
+      );
+      formData['postcode'] = postcode;
+
+      final address = model.address ?? '';
+      addressController.value = TextEditingValue(
+        text: address,
+      );
+      formData['address'] = address;
+
+      final buildingName = model.buildingName ?? '';
+      detailAddressController.value = TextEditingValue(
+        text: buildingName,
+      );
+      formData['address_detail'] = buildingName;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -397,9 +435,32 @@ class _SignUpFormState extends State<SignUpForm> {
                   ],
                 ),
                 SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 3, // 전체 공간에서 3/4 크기 할당
+                      child: PostcodeInput(
+                        hint: '우편번호',
+                        controller: postcodeController, // 컨트롤러 연결
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1, // 전체 공간에서 1/4 크기 할당
+                      child: AddressSearchButton(
+                        onPressed: () => searchAddress(context),
+                        buttonText: '주소검색',
+                      ),
+                    ),
+                  ],
+                ),
                 RoundedAddressInput(
-                  hint: '주소',
+                  hint: '기본주소',
                   controller: addressController, // 컨트롤러 연결
+                ),
+                RoundedAddressInput(
+                  hint: '상세주소',
+                  controller: detailAddressController, // 컨트롤러 연결
                 ),
                 SizedBox(height: 10),
                 SignUpClearElevatedButton(

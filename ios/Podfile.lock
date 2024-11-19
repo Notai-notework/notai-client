@@ -50,6 +50,8 @@ PODS:
     - Flutter
     - FlutterMacOS
   - SwiftyGif (5.4.5)
+  - webview_flutter_wkwebview (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
@@ -59,6 +61,7 @@ DEPENDENCIES:
   - pdf_image_renderer (from `.symlinks/plugins/pdf_image_renderer/ios`)
   - pdf_render (from `.symlinks/plugins/pdf_render/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/darwin`)
+  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
 SPEC REPOS:
   trunk:
@@ -82,6 +85,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/pdf_render/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/darwin"
+  webview_flutter_wkwebview:
+    :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
@@ -95,6 +100,7 @@ SPEC CHECKSUMS:
   SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
+  webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
 
 PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
 
