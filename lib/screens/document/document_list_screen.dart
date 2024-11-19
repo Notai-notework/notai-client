@@ -720,7 +720,7 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                                                                                                                     if (!isUploading)
                                                                                                                                                       TextButton(
                                                                                                                                                         onPressed: () {
-                                                                                                                                                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen())); // 모달 창 닫기
+                                                                                                                                                          Navigator.popUntil(context, (route) => route.isFirst);
                                                                                                                                                         },
                                                                                                                                                         child: Center(child: Text('닫기')),
                                                                                                                                                       ),
