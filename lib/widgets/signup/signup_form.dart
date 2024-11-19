@@ -77,7 +77,7 @@ class _SignUpFormState extends State<SignUpForm> {
   }
 
   void onEmailAuthLocked() async {
-    await EmailAuth();
+    await EmailCheck();
   }
 
   void onNickNameAuthLocked() async {
@@ -187,6 +187,24 @@ class _SignUpFormState extends State<SignUpForm> {
 
   Future<void> EmailCheck() async {
     final api = await ApiService();
+    if (emailController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("이메일 입력"),
+          content: Text("이메일을 입력해 주세요."),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+      return;
+    }
     try {
       Response response = await api.post("/email-check", data: {
         "email": emailController.text,
@@ -205,6 +223,7 @@ class _SignUpFormState extends State<SignUpForm> {
         // 서버로부터의 응답이 있는 경우 상태 코드 체크
         switch (e.response!.statusCode) {
           case 409:
+            emailController.clear();
             await EmailCheckDialog(context); // 이메일 중복 시 알림
             break;
           default:
@@ -228,24 +247,6 @@ class _SignUpFormState extends State<SignUpForm> {
 
   Future<void> EmailAuth() async {
     final api = await ApiService();
-    if (emailController.text.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-          title: Text("이메일 입력"),
-          content: Text("이메일을 입력해 주세요."),
-          actions: [
-            CupertinoDialogAction(
-              child: Text('확인'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      );
-      return;
-    }
     showDialog(
       context: context,
       barrierDismissible: true, // 다른 부분을 눌러도 안 닫: false
