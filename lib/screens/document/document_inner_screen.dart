@@ -365,7 +365,9 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
                                       isSaving = true;
                                     });
 
-                                    await _save(widget.document['id'],
+                                    // await _save(widget.document['id'],
+                                    //     widget.document['name']);
+                                    await _saveNew(widget.document['id'],
                                         widget.document['name']);
 
                                     setState(() {
@@ -467,13 +469,16 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
                                           ]))
                                         : PageView.builder(
                                             controller: _pageController,
-                                            onPageChanged: (index) {
-                                              _currentImageIndex = index;
+                                            onPageChanged: (index) async {
+                                              await _capture(
+                                                  _currentImageIndex);
+                                              setState(() {
+                                                _currentImageIndex = index;
+                                              });
                                               // notifier[index].clear();
                                             },
                                             itemCount: _images.length,
                                             itemBuilder: (context, index) {
-                                              print(_imagesSizes[index]);
                                               return SingleChildScrollView(
                                                   child: Center(
                                                       child: InteractiveViewer(
@@ -616,6 +621,70 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
         onPressed: () => _showJson(context),
       ),
     ];
+  }
+
+  Future<void> _capture(int index) async {
+    try {
+      RenderRepaintBoundary boundary = _globalKeys[index]
+          .currentContext!
+          .findRenderObject() as RenderRepaintBoundary;
+      ui.Image image = await boundary.toImage(pixelRatio: 1.0);
+      ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+      _images[index] = pngBytes;
+      // 지정한 크기로 조정 (size.width, size.height에 맞게)
+      // pngBytes = await resizeImage(
+      //     pngBytes, _imagesSizes[i][0], _imagesSizes[i][1]);
+
+      // 파일 시스템 경로 찾기
+      // final directory = await getApplicationDocumentsDirectory();
+      // print(directory.path);
+      // final imagePath = '${directory.path}/$id/images/page_${i + 1}.png';
+
+      // await File(imagePath).writeAsBytes(pngBytes);
+
+      // 이미지 저장
+      // final result = await ImageGallerySaver.saveImage(pngBytes,
+      //     quality: 100, name: "my_scribble_image");
+      print("Image saved");
+    } catch (e) {
+      print("Error saving image: $e");
+    }
+  }
+
+  Future<void> _saveNew(int id, String fileName) async {
+    try {
+      await _capture(_currentImageIndex);
+
+      for (int i = 0; i < _images.length; i++) {
+        final directory = await getApplicationDocumentsDirectory();
+        final imagePath = '${directory.path}/$id/images/page_${i + 1}.png';
+        // print(directory.path);
+        // print('ddd');
+        // return;
+
+        await File(imagePath).writeAsBytes(_images[i]);
+
+        // 이미지 저장
+        // final result = await ImageGallerySaver.saveImage(pngBytes,
+        //     quality: 100, name: "my_scribble_image");
+      }
+      print("Image saved");
+    } catch (e) {
+      print("Error saving image: $e");
+    }
+
+    final fm = await FileManagement();
+    await fm.convertImagesToPdf(id, fileName, _imagesSizes);
+
+    // Navigator.pushReplacement(
+    //     context, MaterialPageRoute(builder: (context) => MainScreen()));
+    Navigator.pop(context);
+
+    setState(() {
+      isSaving = false;
+    });
   }
 
   Future<void> _save(int id, String fileName) async {
