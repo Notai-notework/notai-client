@@ -44,6 +44,7 @@ void EmailDialog(BuildContext context, void Function() onEmailAuthSuccess) {
   }
 
   showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (context) => CupertinoAlertDialog(
       title: Text('이메일 인증'),

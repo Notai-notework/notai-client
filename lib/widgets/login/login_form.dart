@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../screens/main_screen.dart';
@@ -35,22 +36,41 @@ class _LoginFormState extends State<LoginForm> {
 
   Future<void> login() async {
     final api = await ApiService();
-    Response response = await api.post("/login", data: {
-      "email": emailController.text,
-      "password": passwordController.text
-    });
+    try {
+      Response response = await api.post("/login", data: {
+        "email": emailController.text,
+        "password": passwordController.text
+      });
 
-    if (response.statusCode == 200) {
-      String? access = response.headers['Authorization']![0];
-      String? refresh = response.headers['refresh']![0];
+      if (response.statusCode == 200) {
+        String? access = response.headers['Authorization']![0];
+        String? refresh = response.headers['refresh']![0];
 
-      final storage = await FlutterSecureStorage();
-      await storage.write(key: "Authorization", value: access);
-      await storage.write(key: "refresh", value: refresh);
-      await storage.write(key: "isLoggedIn", value: "true");
+        final storage = await FlutterSecureStorage();
+        await storage.write(key: "Authorization", value: access);
+        await storage.write(key: "refresh", value: refresh);
+        await storage.write(key: "isLoggedIn", value: "true");
 
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => MainScreen()));
+        // Navigator.pushReplacement(
+        //     context, MaterialPageRoute(builder: (context) => MainScreen()));
+        Navigator.popUntil(context, (route) => route.isFirst);
+      }
+    } on DioException catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text('로그인 오류'),
+          content: Text('입력 정보를 확인해주세요.'),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
     }
 
     api.init();
@@ -98,12 +118,12 @@ class _LoginFormState extends State<LoginForm> {
                 // 이메일 입력 필드
                 RoundedInput(
                   icon: Icons.mail,
-                  hint: 'email',
+                  hint: '이메일',
                   controller: emailController, // 컨트롤러 연결
                 ),
                 // 비밀번호 입력 필드
                 RoundedPasswordInput(
-                  hint: 'password',
+                  hint: '비밀번호',
                   controller: passwordController, // 컨트롤러 연결
                 ),
                 SizedBox(height: 30),
