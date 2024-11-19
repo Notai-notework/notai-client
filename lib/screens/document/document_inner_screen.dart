@@ -97,8 +97,11 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
 
   void toggleChat() {
     if (!isLoggedIn) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      Navigator.push(
+              context, MaterialPageRoute(builder: (context) => LoginScreen()))
+          .then((_) {
+        _checkUser();
+      });
       return;
     }
 
@@ -418,16 +421,23 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
                 Container(
                     child: TextButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LoginScreen())).then((_) {
+                      _checkUser();
+                    });
                   },
                   child: TextButton(
                       onPressed: () {
                         if (!isLoggedIn) {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LoginScreen()));
+                          Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginScreen()))
+                              .then((_) {
+                            _checkUser();
+                          });
                           return;
                         }
                       },
@@ -678,9 +688,9 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
     final fm = await FileManagement();
     await fm.convertImagesToPdf(id, fileName, _imagesSizes);
 
-    // Navigator.pushReplacement(
-    //     context, MaterialPageRoute(builder: (context) => MainScreen()));
     Navigator.pop(context);
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => MainScreen()));
 
     setState(() {
       isSaving = false;

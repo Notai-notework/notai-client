@@ -191,7 +191,9 @@ class _DocumentListState extends State<DocumentListScreen> {
     var storage = await FlutterSecureStorage();
     final check = await storage.read(key: "isLoggedIn");
 
-    isLoggedIn = check == "true";
+    setState(() {
+      isLoggedIn = check == "true";
+    });
 
     String? access = await storage.read(key: 'Authorization');
 
@@ -299,16 +301,10 @@ class _DocumentListState extends State<DocumentListScreen> {
                             MaterialPageRoute(builder: (context) {
                           if (element != null && element.containsKey('id')) {
                             return DocumentInnerScreen(document: element);
-                          } else {
-                            // element가 null이거나 id가 없으면 에러 처리 혹은 다른 로직 실행
-                            return Container(); // ErrorScreen은 예시이며, 상황에 맞는 다른 위젯을 반환할 수 있습니다.
                           }
+                          return Container(); // ErrorScreen은 예시이며, 상황에 맞는 다른 위젯을 반환할 수 있습니다.
                         })).then((_) async {
-                          var result = await _fetchDocumentsList();
-                          setState(() {
-                            _documents = result;
-                          });
-                          setState(() {});
+                          await _checkUser();
                         });
                       },
                       child: Container(
@@ -505,10 +501,13 @@ class _DocumentListState extends State<DocumentListScreen> {
                                                                   TextButton(
                                                                     onPressed:
                                                                         () {
-                                                                      Navigator.pushReplacement(
+                                                                      Navigator.push(
                                                                           context,
                                                                           MaterialPageRoute(
-                                                                              builder: (context) => LoginScreen())); // 모달 창 닫기
+                                                                              builder: (context) => LoginScreen())).then(
+                                                                          (_) {
+                                                                        _checkUser();
+                                                                      }); // 모달 창 닫기
                                                                     },
                                                                     child: Center(
                                                                         child: Text(

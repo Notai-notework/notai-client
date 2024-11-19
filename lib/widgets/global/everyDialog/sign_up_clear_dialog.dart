@@ -13,10 +13,11 @@ Future<void> SignUpClearDialog(BuildContext context) async{
           child: Text('확인'),
           onPressed: () {
             Navigator.pop(context); // 다이얼로그 닫기
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LoginScreen()),
-            );
+            Navigator.pop(context); // 회원가입 페이지 닫기
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(builder: (context) => LoginScreen()),
+            // );
           },
 
         ),
