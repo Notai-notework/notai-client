@@ -90,10 +90,7 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
                             isLoggedIn = false;
                           });
 
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MainScreen()));
+                          Navigator.popUntil(context, (route) => route.isFirst);
                         }
                       },
                       child: Text('로그아웃',
@@ -109,7 +106,9 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => LoginScreen()));
+                                builder: (context) => LoginScreen())).then((_) {
+                          _checkUser();
+                        });
                     },
                     child: Text(isLoggedIn ? "${payload['name']} 님" : '로그인',
                         style: const TextStyle(

@@ -61,7 +61,10 @@ class _MainScreen extends State<MainScreen> {
 
   // 로그인 체크
   Future<void> checkLoggedIn() async {
-    isLoggedIn = await AuthManagement().isLoggedIn();
+    bool check = await AuthManagement().isLoggedIn();
+    setState(() {
+      isLoggedIn = check;
+    });
   }
 
   @override
@@ -71,10 +74,14 @@ class _MainScreen extends State<MainScreen> {
         body: _pages[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
-          onTap: (index) {
+          onTap: (index) async {
+            await checkLoggedIn();
             if (!isLoggedIn && index == 1) {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()));
+                      MaterialPageRoute(builder: (context) => LoginScreen()))
+                  .then((_) {
+                checkLoggedIn();
+              });
               return;
             }
 

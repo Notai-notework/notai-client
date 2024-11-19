@@ -27,6 +27,11 @@ class RoundedInput extends StatelessWidget {
         decoration: InputDecoration(
           icon: Icon(icon, color: Colors.grey),
           hintText: hint,
+          hintStyle: TextStyle(
+            color: Colors.grey.withOpacity(0.5), // 투명도 설정
+            fontWeight: FontWeight.w300, // 가벼운 폰트 두께
+            fontStyle: FontStyle.italic, // 기울임꼴 (선택 사항)
+          ),
           border: InputBorder.none,
         ),
       ),

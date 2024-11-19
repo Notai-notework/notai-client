@@ -328,7 +328,7 @@ class _SignUpFormState extends State<SignUpForm> {
                       flex: 3, // 전체 공간에서 3/4 크기 할당
                       child: RoundedEmailInput(
                         icon: Icons.mail,
-                        hint: 'email',
+                        hint: '이메일',
                         controller: emailController,
                         islocked: isEmailLocked, // 컨트롤러 연결
                       ),
@@ -343,12 +343,12 @@ class _SignUpFormState extends State<SignUpForm> {
                   ],
                 ),
                 RoundedPasswordInput(
-                  hint: 'password',
+                  hint: '비밀번호',
                   controller: passwordController, // 컨트롤러 연결
                 ),
                 SizedBox(height: 10),
                 RoundedNameInput(
-                  hint: 'name',
+                  hint: '이름',
                   controller: nameController, // 컨트롤러 연결
                 ),
                 SizedBox(height: 10),
@@ -358,7 +358,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     Flexible(
                       flex: 3, // 전체 공간에서 3/4 크기 할당
                       child: RoundedNumberInput(
-                        hint: 'phone number(010-xxxx-xxxx)',
+                        hint: '전화번호 (- 제외하고 입력)',
                         controller: phoneNumberController, // 컨트롤러 연결
                       ),
                     ),
@@ -380,7 +380,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     Expanded(
                       flex: 3, // 전체 공간에서 3/4 크기 할당
                       child: RoundedNicknameInput(
-                        hint: 'nickname',
+                        hint: '별명',
                         controller: nickNameController,
                         islokced: isNickNameLocked,
                       ),
@@ -397,7 +397,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 ),
                 SizedBox(height: 10),
                 RoundedAddressInput(
-                  hint: 'address',
+                  hint: '주소',
                   controller: addressController, // 컨트롤러 연결
                 ),
                 SizedBox(height: 10),
