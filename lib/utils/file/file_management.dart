@@ -151,7 +151,16 @@ class FileManagement {
         .where((file) => file.path.endsWith('.png'))
         .toList();
 
-    pngFiles.sort((a, b) => a.path.compareTo(b.path)); // 정렬
+    pngFiles.sort((a, b) {
+      // 파일명에서 숫자 추출을 위한 정규 표현식
+      final int numA = int.parse(
+          RegExp(r'\d+').firstMatch(a.path.split('/').last)!.group(0)!);
+      final int numB = int.parse(
+          RegExp(r'\d+').firstMatch(b.path.split('/').last)!.group(0)!);
+
+      // 숫자 기준 비교
+      return numA.compareTo(numB);
+    }); // 정렬
 
     // 각 PNG 파일을 PDF의 페이지로 추가
     for (int i = 0; i < pngFiles.length; i++) {

@@ -308,9 +308,7 @@ class _DocumentListState extends State<DocumentListScreen> {
                           setState(() {
                             _documents = result;
                           });
-                          setState(() {
-
-                          });
+                          setState(() {});
                         });
                       },
                       child: Container(
