@@ -176,7 +176,7 @@ class _SignUpFormState extends State<SignUpForm> {
         "name": nameController.text,
         "phoneNumber": phoneNumberController.text,
         "nickname": nickNameController.text,
-        "address": addressController.text,
+        "address": addressController.text + " " + detailAddressController.text,
       });
 
       if (response.statusCode == 201) {
