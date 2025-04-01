@@ -1,14 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class RoundedNumberInput extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
+  final IconData icon;
+
 
   const RoundedNumberInput({
     super.key,
     required this.hint,
     required this.controller,
+    required this.icon,
+
   });
 
   @override
@@ -17,25 +22,27 @@ class RoundedNumberInput extends StatelessWidget {
       // margin: EdgeInsets.fromLTRB(100, 10, 10, 10),
       // 휴대폰 인증 버튼 표시시 알맞는 패딩값.
       margin: EdgeInsets.fromLTRB(100, 10, 100, 10),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
+        color: CupertinoColors.systemGrey6, // 연한 회색 배경
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: TextField(
+      child: CupertinoTextField(
         controller: controller,
-        decoration: InputDecoration(
-            icon: Icon(Icons.phone_android_sharp, color: Colors.grey),
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: Colors.grey.withOpacity(0.5), // 투명도 설정
-              fontWeight: FontWeight.w300, // 가벼운 폰트 두께
-              fontStyle: FontStyle.italic, // 기울임꼴 (선택 사항)
-            ),
-            border: InputBorder.none,
-            counterText: ''),
         inputFormatters: [PhoneNumberFormatter()], // 전화번호 형태 자동 변
         maxLength: 13,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        placeholder: hint,
+        placeholderStyle: TextStyle(
+          color: CupertinoColors.inactiveGray,
+          fontWeight: FontWeight.w300,
+        ),
+        prefix: Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: Icon(icon, color: CupertinoColors.inactiveGray),
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
     );
   }

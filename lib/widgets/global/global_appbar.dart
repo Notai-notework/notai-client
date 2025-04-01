@@ -49,7 +49,14 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: titleColor,
+      backgroundColor: threeColor,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: fourColor, width: 3), // 하단 테두리 추가
+          ),
+        ),
+      ),
       // leading: widget.leading ??
       //     IconButton(
       //       icon: Icon(Icons.arrow_back),
@@ -60,14 +67,16 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
       //     ),
       title: widget.title ??
           const Padding(
-              padding: EdgeInsets.fromLTRB(200, 0, 0, 0),
+              padding: EdgeInsets.fromLTRB(100, 0, 0, 0),
               child: Center(
                   child: Text(
                 'NOTAI',
                 style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white),
+                    fontFamily: "bold",
+                    letterSpacing: 3,
+                    fontSize: 38,
+                    fontWeight: FontWeight.w300,
+                    color: titleColor),
               ))),
       actions: widget.actions ??
           [
@@ -95,7 +104,7 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
                       },
                       child: Text('로그아웃',
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: titleColor,
                               fontSize: 18,
                               fontWeight: FontWeight.w600)))),
             Padding(
@@ -112,7 +121,7 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
                     },
                     child: Text(isLoggedIn ? "${payload['name']} 님" : '로그인',
                         style: const TextStyle(
-                            color: Colors.white,
+                            color: titleColor,
                             fontSize: 18,
                             fontWeight: FontWeight.w600)))),
           ],

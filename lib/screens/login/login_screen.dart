@@ -36,8 +36,8 @@ class _LoginScreenState extends State<LoginScreen>
     double viewInset = MediaQuery.of(context)
         .viewInsets
         .bottom; // we are using this to determine Keyboard is opened or not
-    double defaultLoginSize = size.height - (size.height * 0.05);
-    double defaultRegisterSize = size.height - (size.height * 0.05);
+    double defaultLoginSize = size.height - (size.height * 0.005);
+    double defaultRegisterSize = size.height - (size.height * 0.005);
 
     containerSize =
         Tween<double>(begin: size.height * 0.1, end: defaultRegisterSize)
@@ -71,13 +71,34 @@ class _LoginScreenState extends State<LoginScreen>
                     color: kPrimaryColor),
               )),
 
+          Positioned(
+              top: 700,
+              left: -70,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: kPrimaryColor),
+              )),
+          Positioned(
+              top: 750,
+              right: -50,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: kPrimaryColor),
+              )),
           //왼쪽, 오른쪽 원형 디자인
 
           LoginForm(
               isLogin: isLogin,
               animationDuration: animationDuration,
               size: size,
-              defaultLoginSize: defaultLoginSize),
+              defaultLoginSize: defaultLoginSize)
+          ,
         ],
       ),
     );

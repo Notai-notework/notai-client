@@ -1,40 +1,36 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../utils/color/color.dart';
 
 class NickNameCheckButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String buttonText;
+  final Color backgroundColor;
 
   const NickNameCheckButton({
     Key? key,
     required this.onPressed,
     required this.buttonText,
+    this.backgroundColor = threeColor, // 기본값 설정
+
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: 200,
+      height: 40,
       margin: EdgeInsets.fromLTRB(0, 10, 100, 10),
-      // child: IconButton(
-      //   onPressed: onPressed,
-      //   icon: Icon(Icons.check_circle_sharp),
-      //   iconSize: 35,
-      //   color: threeColor,
-      // )
-      child: ElevatedButton(
+      child: CupertinoButton(
         onPressed: onPressed,
+        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12), // 둥근 모서리 조절 가능
+        pressedOpacity: 0.6,
         child: Text(
           buttonText,
-          style: TextStyle(
-            fontSize: 13,
-            // fontWeight: FontWeight.bold,
-            // color: Colors.grey,
-          ),
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
-        style: ElevatedButton.styleFrom(
-            backgroundColor: threeColor,
-            fixedSize: Size(200, 30),
-            elevation: 5.0),
       ),
     );
   }

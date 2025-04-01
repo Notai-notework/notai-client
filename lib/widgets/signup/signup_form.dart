@@ -62,10 +62,12 @@ class _SignUpFormState extends State<SignUpForm> {
   final TextEditingController detailAddressController = TextEditingController();
   bool isEmailLocked = false;
   bool isNickNameLocked = false;
+  double _opacity = 0.0;
 
   // 입력 폼 모두 입력 여부
   bool isFormComplete() {
-    return !emailController.text.isEmpty ||
+    return
+        !emailController.text.isEmpty ||
         !passwordController.text.isEmpty ||
         !passwordCheckController.text.isEmpty ||
         !nameController.text.isEmpty ||
@@ -327,6 +329,15 @@ class _SignUpFormState extends State<SignUpForm> {
     }
   }
 
+  void initState() {
+    super.initState();
+    Future.delayed(Duration(milliseconds: 300), () {
+      setState(() {
+        _opacity = 1.0; // 로그인 텍스트 서서히 나타나기
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedOpacity(
@@ -351,15 +362,30 @@ class _SignUpFormState extends State<SignUpForm> {
                     },
                   ),
                 ),
-                Text(
-                  '회원가입',
-                  style: TextStyle(
-                      color: titleColor,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 60),
+                SizedBox(height: 90),
+                AnimatedOpacity(
+                  opacity: _opacity,
+                  duration: Duration(seconds: 1), // 서서히 나타나도록 설정
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 100),
+                      child: Text(
+                        'To Be With NOTAI',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontFamily: "bold",
+                          color: titleColor,
+                          fontWeight: FontWeight.w300,
+                          fontSize: 60,
+                          letterSpacing: 3,
+                          wordSpacing: 5,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 30),
-                // SvgPicture.asset('utils/images/login.svg'),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -382,43 +408,35 @@ class _SignUpFormState extends State<SignUpForm> {
                   ],
                 ),
                 RoundedPasswordInput(
+                  icon: Icons.lock,
                   hint: '비밀번호',
                   controller: passwordController, // 컨트롤러 연결
                 ),
-                SizedBox(height: 10),
                 RoundedNameInput(
+                  icon: Icons.abc_outlined,
                   hint: '이름',
                   controller: nameController, // 컨트롤러 연결
                 ),
-                SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Flexible(
                       flex: 3, // 전체 공간에서 3/4 크기 할당
                       child: RoundedNumberInput(
+                        icon: Icons.phone_iphone_outlined,
                         hint: '전화번호 (- 제외하고 입력)',
                         controller: phoneNumberController, // 컨트롤러 연결
                       ),
                     ),
-                    // Flexible(
-                    //   child: NumberAuthElevatedButton(
-                    //     onPressed: () {
-                    //       NumberDialog(context);
-                    //     },
-                    //     buttonText: '',
-                    //   ),
-                    // ),
-                    // 휴대폰 인증 버튼
                   ],
                 ),
-                SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
                       flex: 3, // 전체 공간에서 3/4 크기 할당
                       child: RoundedNicknameInput(
+                        icon: Icons.abc_outlined,
                         hint: '별명',
                         controller: nickNameController,
                         islokced: isNickNameLocked,
@@ -434,13 +452,13 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
                       flex: 3, // 전체 공간에서 3/4 크기 할당
                       child: PostcodeInput(
+                        icon: Icons.home_filled,
                         hint: '우편번호',
                         controller: postcodeController, // 컨트롤러 연결
                       ),
@@ -455,10 +473,12 @@ class _SignUpFormState extends State<SignUpForm> {
                   ],
                 ),
                 RoundedAddressInput(
+                  icon: Icons.home_filled,
                   hint: '기본주소',
                   controller: addressController, // 컨트롤러 연결
                 ),
                 RoundedAddressInput(
+                  icon: Icons.home_filled,
                   hint: '상세주소',
                   controller: detailAddressController, // 컨트롤러 연결
                 ),

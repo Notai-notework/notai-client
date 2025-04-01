@@ -80,6 +80,7 @@ class _FindAllFormState extends State<FindAllForm> {
                       fontSize: 60),
                 ),
                 RoundedNameInput(
+                  icon: Icons.lock,
                   hint: 'name',
                   controller: findidnameController, // 컨트롤러 연결
                 ),
@@ -89,6 +90,7 @@ class _FindAllFormState extends State<FindAllForm> {
                     Flexible(
                       flex: 3, // 전체 공간에서 3/4 크기 할당
                       child: RoundedNumberInput(
+                        icon: Icons.abc_outlined,
                         hint: 'phone number',
                         controller: findidphoneNumberController, // 컨트롤러 연결
                       ),
@@ -133,6 +135,7 @@ class _FindAllFormState extends State<FindAllForm> {
                   ],
                 ),
                 RoundedNameInput(
+                  icon: Icons.lock,
                   hint: 'name',
                   controller: findpwnameController, // 컨트롤러 연결
                 ),
@@ -142,6 +145,7 @@ class _FindAllFormState extends State<FindAllForm> {
                     Flexible(
                       flex: 3, // 전체 공간에서 3/4 크기 할당
                       child: RoundedNumberInput(
+                        icon: Icons.abc_outlined,
                         hint: 'phone number',
                         controller: findpwphoneNumberController, // 컨트롤러 연결
                       ),

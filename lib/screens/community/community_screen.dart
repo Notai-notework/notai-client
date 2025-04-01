@@ -334,7 +334,7 @@ class _DocumentItemState extends State<DocumentItem> {
                       );
 
                       final fm = await FileManagement();
-                      fm.saveDownloadedDocument(
+                      await fm.saveDownloadedDocument(
                           widget.data['documentFileUrl'], widget.data);
 
                       Navigator.pop(context);

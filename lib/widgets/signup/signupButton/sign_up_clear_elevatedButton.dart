@@ -1,27 +1,37 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../utils/color/color.dart';
 
 class SignUpClearElevatedButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String buttonText;
+  final Color backgroundColor;
 
   const SignUpClearElevatedButton({
     super.key,
     required this.onPressed,
     required this.buttonText,
+    this.backgroundColor = threeColor,
+
   });
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        onPressed();
-      },
-      style: ElevatedButton.styleFrom(
-          backgroundColor: threeColor,
-          fixedSize: const Size(200, 30),
-          elevation: 5.0),
-      child: Text(buttonText),
+    return Container(
+      width: 200,
+      height: 40,
+      margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+      child: CupertinoButton(
+        onPressed: onPressed,
+        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12), // 둥근 모서리 조절 가능
+        pressedOpacity: 0.6,
+        child: Text(
+          buttonText,
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        ),
+      ),
     );
   }
 }

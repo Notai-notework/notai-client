@@ -73,6 +73,7 @@ class _MainScreen extends State<MainScreen> {
         appBar: GlobalAppbar(leading: Container()),
         body: _pages[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: threeColor,
           currentIndex: _selectedIndex,
           onTap: (index) async {
             await checkLoggedIn();
@@ -96,6 +97,7 @@ class _MainScreen extends State<MainScreen> {
             // BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: '즐겨찾기'),
           ],
           selectedItemColor: titleColor,
-        ));
+        )
+    );
   }
 }
