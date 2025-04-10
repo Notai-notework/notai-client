@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/src/response.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
@@ -207,6 +208,8 @@ class _DocumentListState extends State<DocumentListScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
+        // width: double.infinity,
+        // height: MediaQuery.of(context).size.height,
         padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
         child: SingleChildScrollView(
             child: Column(
@@ -215,7 +218,7 @@ class _DocumentListState extends State<DocumentListScreen> {
             Wrap(spacing: 40, runSpacing: 60, children: [
               Container(
                   decoration: BoxDecoration(
-                    color: twoColor,
+                    color: threeColor,
                     border: Border.all(
                       color: twoColor,
                       width: 3,

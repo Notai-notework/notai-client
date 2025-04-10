@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notai/screens/community/community_screen.dart';
@@ -9,6 +8,8 @@ import 'package:notai/utils/auth/auth_management.dart';
 import 'package:notai/utils/color/color.dart';
 import 'package:notai/widgets/global/global_appbar.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../widgets/document/circle_design.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -69,35 +70,67 @@ class _MainScreen extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: GlobalAppbar(leading: Container()),
-        body: _pages[_selectedIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: threeColor,
-          currentIndex: _selectedIndex,
-          onTap: (index) async {
-            await checkLoggedIn();
-            if (!isLoggedIn && index == 1) {
-              Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()))
-                  .then((_) {
-                checkLoggedIn();
-              });
-              return;
-            }
-
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          items: const [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.file_copy_rounded), label: '문서'),
-            BottomNavigationBarItem(icon: Icon(Icons.chat), label: '커뮤니티'),
-            // BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: '즐겨찾기'),
-          ],
-          selectedItemColor: titleColor,
-        )
+    return Stack(
+      children: [
+        const BackgroundDecoration(), // ✅ 항상 뒤에 깔릴 배경
+        Scaffold(
+          backgroundColor: Colors.transparent, // Scaffold 배경 없애기!
+          appBar: GlobalAppbar(leading: Container()),
+          body: _pages[_selectedIndex],
+          bottomNavigationBar: Container(
+            height: 84,
+            margin: const EdgeInsets.only(left: 350, right: 350, bottom: 20),
+            decoration: BoxDecoration(
+              color: threeColor,
+              borderRadius: const BorderRadius.all(Radius.circular(24)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: BottomNavigationBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              type: BottomNavigationBarType.fixed,
+              currentIndex: _selectedIndex,
+              onTap: (index) async {
+                await checkLoggedIn();
+                if (!isLoggedIn && index == 1) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  ).then((_) {
+                    checkLoggedIn();
+                  });
+                  return;
+                }
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+              selectedItemColor: titleColor,
+              unselectedItemColor: Colors.grey,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.file_copy_rounded, size: 30),
+                  label: '문서',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.chat, size: 30),
+                  label: '커뮤니티',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.bookmark, size: 30),
+                  label: '즐겨찾기',
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

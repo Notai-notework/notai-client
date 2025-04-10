@@ -55,19 +55,17 @@ class _SignUpFormState extends State<SignUpForm> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController nickNameController = TextEditingController();
-
-  // final TextEditingController addressController = TextEditingController();
   final TextEditingController postcodeController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController detailAddressController = TextEditingController();
+
   bool isEmailLocked = false;
   bool isNickNameLocked = false;
   double _opacity = 0.0;
 
   // 입력 폼 모두 입력 여부
   bool isFormComplete() {
-    return
-        !emailController.text.isEmpty ||
+    return !emailController.text.isEmpty ||
         !passwordController.text.isEmpty ||
         !passwordCheckController.text.isEmpty ||
         !nameController.text.isEmpty ||

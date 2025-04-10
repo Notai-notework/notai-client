@@ -49,12 +49,14 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: threeColor,
+      backgroundColor: Colors.transparent, // ✅ 완전 투명
+      elevation: 0, // ✅ 그림자 제거거
+      // backgroundColor: threeColor,
       flexibleSpace: Container(
         decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: fourColor, width: 3), // 하단 테두리 추가
-          ),
+          // border: Border(
+          //   bottom: BorderSide(color: fourColor, width: 3), // 하단 테두리 추가
+          // ),
         ),
       ),
       // leading: widget.leading ??

@@ -97,8 +97,7 @@ class _LoginScreenState extends State<LoginScreen>
               isLogin: isLogin,
               animationDuration: animationDuration,
               size: size,
-              defaultLoginSize: defaultLoginSize)
-          ,
+              defaultLoginSize: defaultLoginSize),
         ],
       ),
     );
