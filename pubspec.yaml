@@ -43,6 +43,7 @@ flutter:
     - lib/assets/images/
     - .env
     - lib/assets/images/note.json
+    - lib/assets/images/start.json
   fonts:
     - family: bold
       fonts:

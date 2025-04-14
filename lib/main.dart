@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notai/screens/main_screen.dart';
+import 'package:notai/screens/splash_start_screen.dart';
 import 'package:notai/utils/color/color.dart';
 
 void main() async {
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           primaryColor: kPrimaryColor,
           textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme)),
-      home: MainScreen(),
+      home: const SplashScreen(),
     );
   }
 }

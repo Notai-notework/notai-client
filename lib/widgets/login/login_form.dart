@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lottie/lottie.dart';
 import '../../screens/main_screen.dart';
+import '../../screens/splash_start_screen.dart';
 import '../../utils/auth/login_authorization.dart';
 import '../../utils/color/color.dart';
 import '../../utils/http/api_service.dart';
@@ -187,6 +188,15 @@ class _LoginFormState extends State<LoginForm> {
                       onPressed: () {},
                       buttonText: "비밀번호 찾기",
                     ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SplashScreen()),
+                        );
+                      },
+                      child: Text("test"),
+                    )
                   ],
                 ),
               ],
