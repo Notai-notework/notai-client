@@ -8,13 +8,9 @@ import '../../utils/http/api_service.dart';
 import '../global/everyDialog/email_check_dialog.dart';
 import '../global/everyDialog/email_dialog.dart';
 import '../global/everyDialog/sign_up_http_error.dart';
-import '../global/everyLoginButton/rounded_input.dart';
 import '../global/everyLoginButton/rounded_name_input.dart';
 import '../global/everyLoginButton/rounded_number_input.dart';
 import '../global/everyLoginButton/rounded_password_input.dart';
-import 'findAllButton/find_elevatedbutton.dart';
-import 'findIdButton/find_id_elevatedbutton.dart';
-import 'findPwButton/find_pw_elevatedbutton.dart';
 
 class FindAllForm extends StatefulWidget {
   const FindAllForm({
@@ -51,6 +47,145 @@ class _FindAllFormState extends State<FindAllForm> {
     setState(() {
       isEmailLocked = true; // 이메일 인증 후 입력창 잠금
     });
+  }
+
+  Future<void> PwEmailCheck() async {
+    //이메일 인증할 때 존재하는 이메일이면 그냥 이메일 인증이 되도록 하는 부분 EmailCheck는
+    //회원가입할때 사용하는거라 중복 이메일을 확인해야하지만 PwEmailCheck는 중복 이메일 처리 안함
+    //즉 이메일의 존재 여부를 확인하는.
+    final api = await ApiService();
+
+    if (emailController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("이메일 입력"),
+          content: Text("이메일을 입력해 주세요."),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    try {
+      Response response = await api.post("/email-exists", data: {
+        "email": emailController.text,
+      });
+
+      if (response.statusCode == 200) {
+        // 이메일이 존재하면 이메일 인증 진행
+        await EmailAuth();
+      } else if (response.statusCode == 404) {
+        // 이메일이 존재하지 않으면 알림
+        await EmailCheckDialog(context, customMessage: "해당 이메일로 가입된 계정이 없습니다.");
+      } else {
+        print("다른 상태 코드가 반환되었습니다: ${response.statusCode}");
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        switch (e.response!.statusCode) {
+          case 404:
+            emailController.clear();
+            await EmailCheckDialog(context,
+                customMessage: "해당 이메일로 가입된 계정이 없습니다.");
+            break;
+          default:
+            print("알 수 없는 상태 코드: ${e.response!.statusCode}");
+            break;
+        }
+      } else {
+        print("네트워크 오류 발생 또는 서버 연결 불가: ${e.message}");
+        await SignUpHttpErrorDialog(context);
+      }
+    } catch (e) {
+      print("예기치 못한 오류 발생: $e");
+    }
+  }
+
+  Future<void> changePassword() async {
+    final api = await ApiService();
+
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("입력 오류"),
+          content: Text("이메일과 변경할 비밀번호를 모두 입력해 주세요.",
+              style: TextStyle(
+                fontSize: 17,
+              )),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('확인'),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      Response response = await api.post("/change-password", data: {
+        "email": emailController.text,
+        "newPassword": passwordController.text,
+      });
+
+      Navigator.pop(context); // 로딩창 닫기
+
+      if (response.statusCode == 200) {
+        await showDialog(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: Text("성공"),
+            content: Text("비밀번호가 성공적으로 변경되었습니다."),
+            actions: [
+              CupertinoDialogAction(
+                child: Text('확인'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context); // 비밀번호 변경 화면도 닫기
+                },
+              ),
+            ],
+          ),
+        );
+      } else {
+        print("비밀번호 변경 실패: ${response.statusCode}");
+      }
+    } on DioException catch (e) {
+      Navigator.pop(context); // 로딩창 닫기
+      print("Dio 오류: ${e.message}");
+      await showDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("에러"),
+          content: Text("네트워크 오류가 발생했습니다. 다시 시도해주세요."),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('확인'),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      print("예기치 못한 오류: $e");
+    }
   }
 
   Future<void> EmailCheck() async {
@@ -191,7 +326,28 @@ class _FindAllFormState extends State<FindAllForm> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 100),
                       child: Text(
-                        'Find Password',
+                        'Change',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontFamily: "bold",
+                          color: titleColor,
+                          fontWeight: FontWeight.w300,
+                          fontSize: 80,
+                          letterSpacing: 3,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                AnimatedOpacity(
+                  opacity: _opacity,
+                  duration: const Duration(seconds: 1),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 100),
+                      child: Text(
+                        'Password',
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontFamily: "bold",
@@ -250,33 +406,15 @@ class _FindAllFormState extends State<FindAllForm> {
                 ),
                 RoundedPasswordInput(
                   icon: Icons.lock,
-                  hint: '비밀번호',
+                  hint: '변경할 비밀번호',
                   controller: passwordController, // 컨트롤러 연결
-                ),
-                RoundedNameInput(
-                  icon: Icons.abc_outlined,
-                  hint: '이름',
-                  controller: nameController, // 컨트롤러 연결
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      flex: 3, // 전체 공간에서 3/4 크기 할당
-                      child: RoundedNumberInput(
-                        icon: Icons.phone_iphone_outlined,
-                        hint: '전화번호 (- 제외하고 입력)',
-                        controller: phoneNumberController, // 컨트롤러 연결
-                      ),
-                    ),
-                  ],
                 ),
                 SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CupertinoButton(
-                      onPressed: () {},
+                      onPressed: changePassword,
                       color: threeColor,
                       // 버튼 색상
                       padding:

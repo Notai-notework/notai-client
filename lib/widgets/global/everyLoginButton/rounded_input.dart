@@ -28,7 +28,6 @@ class RoundedInput extends StatelessWidget {
         placeholderStyle: TextStyle(
           color: CupertinoColors.inactiveGray,
           fontWeight: FontWeight.w300,
-          fontStyle: FontStyle.italic,
         ),
         prefix: Padding(
           padding: const EdgeInsets.only(left: 8),

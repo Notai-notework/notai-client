@@ -407,7 +407,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 ),
                 RoundedPasswordInput(
                   icon: Icons.lock,
-                  hint: '비밀번호',
+                  hint: '변경할 비밀번호!',
                   controller: passwordController, // 컨트롤러 연결
                 ),
                 RoundedNameInput(

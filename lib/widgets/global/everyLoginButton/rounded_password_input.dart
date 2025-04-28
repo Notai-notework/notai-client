@@ -18,7 +18,7 @@ class RoundedPasswordInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 1000,
-      height: 40,
+      height: 45,
       margin: const EdgeInsets.fromLTRB(100, 10, 100, 10),
       decoration: BoxDecoration(
         color: CupertinoColors.systemGrey6, // 연한 회색 배경
@@ -26,6 +26,7 @@ class RoundedPasswordInput extends StatelessWidget {
       ),
       child: CupertinoTextField(
         controller: controller,
+        obscureText: true,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         placeholder: hint,
         placeholderStyle: TextStyle(

@@ -186,7 +186,7 @@ class _LoginFormState extends State<LoginForm> {
                     SizedBox(width: 20),
                     FindElevatedButton(
                       onPressed: () {},
-                      buttonText: "비밀번호 찾기",
+                      buttonText: "비밀번호 변경",
                     ),
                     ElevatedButton(
                       onPressed: () {

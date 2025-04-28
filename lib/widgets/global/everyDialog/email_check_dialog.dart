@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Future<void> EmailCheckDialog(BuildContext context) async {
+Future<void> EmailCheckDialog(BuildContext context, {String customMessage = "이미 사용 중인 이메일입니다."}) async {
   showDialog(
     context: context,
     builder: (context) => CupertinoAlertDialog(
@@ -18,3 +18,4 @@ Future<void> EmailCheckDialog(BuildContext context) async {
     ),
   );
 }
+
