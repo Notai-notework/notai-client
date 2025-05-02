@@ -7,6 +7,7 @@ import '../../utils/color/color.dart';
 import '../../utils/http/api_service.dart';
 import '../global/everyDialog/email_check_dialog.dart';
 import '../global/everyDialog/email_dialog.dart';
+import '../global/everyDialog/pw_email_check_dialog.dart';
 import '../global/everyDialog/sign_up_http_error.dart';
 import '../global/everyLoginButton/rounded_name_input.dart';
 import '../global/everyLoginButton/rounded_number_input.dart';
@@ -43,6 +44,13 @@ class _FindAllFormState extends State<FindAllForm> {
     await EmailCheck();
   }
 
+  void onEmailExistsLocked() async {
+    setState(() {
+      isEmailLocked = true; // 이메일 인증 후 입력창 잠금
+    });
+    await PwEmailCheck();
+  }
+
   void onEmailAuthSuccess() {
     setState(() {
       isEmailLocked = true; // 이메일 인증 후 입력창 잠금
@@ -73,28 +81,33 @@ class _FindAllFormState extends State<FindAllForm> {
       );
       return;
     }
-
+//409 존재 200 존재xㄴ
+    //비번변경 이미 되어있었네
+    // HTTP 'Patch'
+    // /api/users/password
+    // body: { password: "새 비밀번호" }
     try {
       Response response = await api.post("/email-exists", data: {
         "email": emailController.text,
       });
 
-      if (response.statusCode == 200) {
-        // 이메일이 존재하면 이메일 인증 진행
-        await EmailAuth();
-      } else if (response.statusCode == 404) {
-        // 이메일이 존재하지 않으면 알림
-        await EmailCheckDialog(context, customMessage: "해당 이메일로 가입된 계정이 없습니다.");
+      if (response.statusCode == 409) {
+        // 이메일이 존재, 비번 변경 가능
+        setState(() {
+          isEmailLocked = true;
+        });
+      } else if (response.statusCode == 200) {
+        // 이메일이 존재x, 가입완료된 이메일 입력해야함
+        await PwEmailCheckDialog(context);
       } else {
         print("다른 상태 코드가 반환되었습니다: ${response.statusCode}");
       }
     } on DioException catch (e) {
       if (e.response != null) {
         switch (e.response!.statusCode) {
-          case 404:
+          case 200:
             emailController.clear();
-            await EmailCheckDialog(context,
-                customMessage: "해당 이메일로 가입된 계정이 없습니다.");
+            await PwEmailCheckDialog(context);
             break;
           default:
             print("알 수 없는 상태 코드: ${e.response!.statusCode}");
@@ -397,7 +410,7 @@ class _FindAllFormState extends State<FindAllForm> {
                     ),
                     Flexible(
                       child: EmailAuthElevatedButton(
-                        onPressed: isEmailLocked ? () {} : onEmailAuthLocked,
+                        onPressed: isEmailLocked ? () {} : onEmailExistsLocked,
                         // 인증 완료되면 버튼 비활성화
                         buttonText: isEmailLocked ? '인증 완료' : '이메일 인증',
                       ),

@@ -249,7 +249,6 @@ class _SignUpFormState extends State<SignUpForm> {
       print("예기치 못한 오류 발생: $e");
     }
   }
-
   //이메일 중복 확인 후 인증 진행
   //try-catch 사용시 try 오류 발생하면 무조건 catc처리가 되어 조건문 실행이 안됨
   //그래서 DioException 이용해서 api 오류랑 그 외의 오류 처리 분리함
@@ -407,7 +406,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 ),
                 RoundedPasswordInput(
                   icon: Icons.lock,
-                  hint: '변경할 비밀번호!',
+                  hint: '비밀번호',
                   controller: passwordController, // 컨트롤러 연결
                 ),
                 RoundedNameInput(
@@ -493,3 +492,13 @@ class _SignUpFormState extends State<SignUpForm> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+

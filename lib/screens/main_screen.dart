@@ -8,7 +8,6 @@ import 'package:notai/utils/auth/auth_management.dart';
 import 'package:notai/utils/color/color.dart';
 import 'package:notai/widgets/global/global_appbar.dart';
 import 'package:path_provider/path_provider.dart';
-
 import '../widgets/document/circle_design.dart';
 
 class MainScreen extends StatefulWidget {

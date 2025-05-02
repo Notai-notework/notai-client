@@ -69,7 +69,7 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
       //     ),
       title: widget.title ??
           const Padding(
-              padding: EdgeInsets.fromLTRB(50, 0, 0, 0),
+              padding: EdgeInsets.fromLTRB(100, 0, 0, 0),
               child: Center(
                   child: Text(
                 'NOTAI',

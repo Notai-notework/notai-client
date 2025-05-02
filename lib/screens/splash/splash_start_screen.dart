@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'main_screen.dart'; // 메인 화면 import
+import '../main_screen.dart'; // 메인 화면 import
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: SizedBox.expand( // 화면 전체 크기로
         child: Lottie.asset(
-          'lib/assets/images/notai.json',
+          'lib/assets/images/notai_final.json',
           fit: BoxFit.cover, // 애니메이션도 화면에 꽉 맞춤
         ),
       ),

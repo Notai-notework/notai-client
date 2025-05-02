@@ -394,14 +394,28 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
         child: Scaffold(
             // key: UniqueKey(),
             appBar: GlobalAppbar(
+              // title: Center(
+              //     child: Text(
+              //   titleName,
+              //   style: TextStyle(
+              //       fontSize: 40,
+              //       fontWeight: FontWeight.w900,
+              //       color: Colors.black),
+              // )),
+              //문서 title 가운데 위치 조정
               title: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 100), // 오른쪽으로 20만큼 이동
                   child: Text(
-                titleName,
-                style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white),
-              )),
+                    titleName,
+                    style: const TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
@@ -417,7 +431,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
                           toggleChat();
                         },
                         color: _isChatVisible ? Colors.black : Colors.white,
-                        icon: Icon(Icons.live_help))),
+                        icon: Icon(Icons.live_help,color: Colors.black,))),
                 Container(
                     child: TextButton(
                   onPressed: () {
@@ -443,7 +457,7 @@ class _DocumentInnerScreenState extends State<DocumentInnerScreen> {
                       },
                       child: Text(isLoggedIn ? payload['name'] : '로그인',
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontSize: 18,
                               fontWeight: FontWeight.w600))),
                 ))
