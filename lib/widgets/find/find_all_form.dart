@@ -9,8 +9,6 @@ import '../global/everyDialog/email_check_dialog.dart';
 import '../global/everyDialog/email_dialog.dart';
 import '../global/everyDialog/pw_email_check_dialog.dart';
 import '../global/everyDialog/sign_up_http_error.dart';
-import '../global/everyLoginButton/rounded_name_input.dart';
-import '../global/everyLoginButton/rounded_number_input.dart';
 import '../global/everyLoginButton/rounded_password_input.dart';
 
 class FindAllForm extends StatefulWidget {
@@ -40,27 +38,17 @@ class _FindAllFormState extends State<FindAllForm> {
   double _opacity = 0.0;
   bool isEmailLocked = false;
 
-  void onEmailAuthLocked() async {
-    await EmailCheck();
-  }
-
-  void onEmailExistsLocked() async {
-    setState(() {
-      isEmailLocked = true; // 이메일 인증 후 입력창 잠금
-    });
-    await PwEmailCheck();
-  }
-
   void onEmailAuthSuccess() {
     setState(() {
       isEmailLocked = true; // 이메일 인증 후 입력창 잠금
     });
   }
 
+  void onEmailAuthLocked() async {
+    await PwEmailCheck();
+  }
+
   Future<void> PwEmailCheck() async {
-    //이메일 인증할 때 존재하는 이메일이면 그냥 이메일 인증이 되도록 하는 부분 EmailCheck는
-    //회원가입할때 사용하는거라 중복 이메일을 확인해야하지만 PwEmailCheck는 중복 이메일 처리 안함
-    //즉 이메일의 존재 여부를 확인하는.
     final api = await ApiService();
 
     if (emailController.text.isEmpty) {
@@ -81,23 +69,17 @@ class _FindAllFormState extends State<FindAllForm> {
       );
       return;
     }
-//409 존재 200 존재xㄴ
-    //비번변경 이미 되어있었네
-    // HTTP 'Patch'
-    // /api/users/password
-    // body: { password: "새 비밀번호" }
+
     try {
-      Response response = await api.post("/email-exists", data: {
+      Response response = await api.post("/email-check", data: {
         "email": emailController.text,
       });
 
       if (response.statusCode == 409) {
-        // 이메일이 존재, 비번 변경 가능
-        setState(() {
-          isEmailLocked = true;
-        });
+        //409 = 이메일 중복 = 이메일 이미 존재 = 인증 진행
+        await EmailAuth();
       } else if (response.statusCode == 200) {
-        // 이메일이 존재x, 가입완료된 이메일 입력해야함
+        //200 = 가입 가능 이메일 = 가입되지 않은 이메일 = 비밀번호 찾기 불가
         await PwEmailCheckDialog(context);
       } else {
         print("다른 상태 코드가 반환되었습니다: ${response.statusCode}");
@@ -105,26 +87,66 @@ class _FindAllFormState extends State<FindAllForm> {
     } on DioException catch (e) {
       if (e.response != null) {
         switch (e.response!.statusCode) {
-          case 200:
-            emailController.clear();
-            await PwEmailCheckDialog(context);
+          case 409:
+            await EmailAuth(); // 이미 가입된 이메일 → 인증
             break;
           default:
             print("알 수 없는 상태 코드: ${e.response!.statusCode}");
             break;
         }
       } else {
-        print("네트워크 오류 발생 또는 서버 연결 불가: ${e.message}");
+        print("네트워크 오류: ${e.message}");
         await SignUpHttpErrorDialog(context);
       }
     } catch (e) {
-      print("예기치 못한 오류 발생: $e");
+      print("예외 발생: $e");
+    }
+  }
+
+  Future<void> EmailAuth() async {
+    final api = await ApiService();
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => Center(child: CircularProgressIndicator()),
+    );
+    try {
+      Response response = await api.post(
+        "/email-code",
+        queryParameters: {"email": emailController.text},
+      );
+      Navigator.pop(context);
+
+      if (response.statusCode == 200) {
+        print("이메일 인증 코드 전송 성공");
+        setState(() {
+          isEmailLocked = true;
+        });
+        EmailDialog(context, onEmailAuthSuccess); // 인증 코드 입력 받기
+      } else {
+        print("인증 요청 실패: ${response.statusCode}");
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      print("API 오류: $e");
+      showDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text("네트워크 오류"),
+          content: Text("이메일 인증 중 문제가 발생했습니다."),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('확인'),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      );
     }
   }
 
   Future<void> changePassword() async {
     final api = await ApiService();
-
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       showDialog(
         context: context,
@@ -144,7 +166,6 @@ class _FindAllFormState extends State<FindAllForm> {
       );
       return;
     }
-
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -152,9 +173,9 @@ class _FindAllFormState extends State<FindAllForm> {
     );
 
     try {
-      Response response = await api.post("/change-password", data: {
-        "email": emailController.text,
-        "newPassword": passwordController.text,
+      Response response = await api.patch("/password-change", data: {
+        "email" : emailController.text,
+        "password": passwordController.text, //새로운 비밀번호
       });
 
       Navigator.pop(context); // 로딩창 닫기
@@ -198,104 +219,6 @@ class _FindAllFormState extends State<FindAllForm> {
     } catch (e) {
       Navigator.pop(context);
       print("예기치 못한 오류: $e");
-    }
-  }
-
-  Future<void> EmailCheck() async {
-    final api = await ApiService();
-    if (emailController.text.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-          title: Text("이메일 입력"),
-          content: Text("이메일을 입력해 주세요."),
-          actions: [
-            CupertinoDialogAction(
-              child: Text('확인'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      );
-      return;
-    }
-    try {
-      Response response = await api.post("/email-check", data: {
-        "email": emailController.text,
-      });
-
-      if (response.statusCode == 200) {
-        await EmailAuth(); // 중복된 이메일이 없는 경우 이메일 인증 진행
-      } else if (response.statusCode == 409) {
-        await EmailCheckDialog(context); // 이메일 중복 시 알림
-      } else {
-        print("다른 상태 코드가 반환되었습니다: ${response.statusCode}");
-      }
-    } on DioException catch (e) {
-      // API 오류 구분
-      if (e.response != null) {
-        // 서버로부터의 응답이 있는 경우 상태 코드 체크
-        switch (e.response!.statusCode) {
-          case 409:
-            emailController.clear();
-            await EmailCheckDialog(context); // 이메일 중복 시 알림
-            break;
-          default:
-            print("알 수 없는 상태 코드: ${e.response!.statusCode}");
-            break;
-        }
-      } else {
-        // 서버 응답이 없고 네트워크 오류 등인 경우
-        print("네트워크 오류 발생 또는 서버 연결 불가: ${e.message}");
-        await SignUpHttpErrorDialog(context); // 네트워크 오류에 대한 알림
-      }
-    } catch (e) {
-      // 그 외의 오류 처리
-      print("예기치 못한 오류 발생: $e");
-    }
-  }
-
-  Future<void> EmailAuth() async {
-    final api = await ApiService();
-    showDialog(
-      context: context,
-      barrierDismissible: true, // 다른 부분을 눌러도 안 닫: false
-      builder: (context) => Center(child: CircularProgressIndicator()),
-    ); //로딩화면
-    try {
-      Response response = await api.post("/email-code",
-          queryParameters: {"email": emailController.text});
-      Navigator.pop(context);
-
-      if (response.statusCode == 200) {
-        print("이메일요청 완료");
-        setState(() {
-          isEmailLocked = true;
-        });
-        EmailDialog(context, onEmailAuthSuccess);
-      } else {
-        print("실패: ${response.statusCode}");
-      }
-    } catch (e) {
-      Navigator.pop(context); // 로딩 화면 닫기
-      print("API 요청 오류: $e");
-      showDialog(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-          title: Text("네트워크 오류"),
-          content: Text("네트워크 혹은 이메일을 다시 확인해주세요."),
-          actions: [
-            CupertinoDialogAction(
-              child: Text('확인'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      );
     }
   }
 
@@ -410,7 +333,7 @@ class _FindAllFormState extends State<FindAllForm> {
                     ),
                     Flexible(
                       child: EmailAuthElevatedButton(
-                        onPressed: isEmailLocked ? () {} : onEmailExistsLocked,
+                        onPressed: isEmailLocked ? () {} : onEmailAuthLocked,
                         // 인증 완료되면 버튼 비활성화
                         buttonText: isEmailLocked ? '인증 완료' : '이메일 인증',
                       ),

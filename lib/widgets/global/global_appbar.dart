@@ -49,6 +49,7 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      centerTitle: true,
       backgroundColor: Colors.transparent, // ✅ 완전 투명
       elevation: 0, // ✅ 그림자 제거거
       // backgroundColor: threeColor,
@@ -68,18 +69,16 @@ class _GlobalAppbarState extends State<GlobalAppbar> {
       //       },
       //     ),
       title: widget.title ??
-          const Padding(
-              padding: EdgeInsets.fromLTRB(100, 0, 0, 0),
-              child: Center(
-                  child: Text(
-                'NOTAI',
-                style: TextStyle(
-                    fontFamily: "bold",
-                    letterSpacing: 3,
-                    fontSize: 38,
-                    fontWeight: FontWeight.w300,
-                    color: titleColor),
-              ))),
+          const Text(
+            'NOTAI',
+            style: TextStyle(
+              fontFamily: "bold",
+              letterSpacing: 3,
+              fontSize: 38,
+              fontWeight: FontWeight.w300,
+              color: titleColor,
+            ),
+          ),
       actions: widget.actions ??
           [
             if (isLoggedIn)
