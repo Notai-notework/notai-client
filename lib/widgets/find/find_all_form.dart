@@ -119,10 +119,7 @@ class _FindAllFormState extends State<FindAllForm> {
 
       if (response.statusCode == 200) {
         print("이메일 인증 코드 전송 성공");
-        setState(() {
-          isEmailLocked = true;
-        });
-        EmailDialog(context, onEmailAuthSuccess); // 인증 코드 입력 받기
+        EmailDialog(context, emailController.text, onEmailAuthSuccess); // 인증 코드 입력 받기
       } else {
         print("인증 요청 실패: ${response.statusCode}");
       }

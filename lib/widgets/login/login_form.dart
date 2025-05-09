@@ -188,15 +188,15 @@ class _LoginFormState extends State<LoginForm> {
                       onPressed: () {},
                       buttonText: "비밀번호 변경",
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SplashScreen()),
-                        );
-                      },
-                      child: Text("test"),
-                    )
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(builder: (context) => const SplashScreen()),
+                    //     );
+                    //   },
+                    //   child: Text("test"),
+                    // )
                   ],
                 ),
               ],

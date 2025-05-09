@@ -267,10 +267,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
       if (response.statusCode == 200) {
         print("이메일요청 완료");
-        setState(() {
-          isEmailLocked = true;
-        });
-        EmailDialog(context, onEmailAuthSuccess);
+        EmailDialog(context, emailController.text, onEmailAuthSuccess); // 인증 코드 입력 받기
       } else {
         print("실패: ${response.statusCode}");
       }
